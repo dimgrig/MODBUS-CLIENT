@@ -24,7 +24,7 @@ ModbusClient::ModbusClient(QWidget *parent)
 //    this->setSizePolicy(sp);
 
     connect(this->ui->le_IP, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
-    connect(this->ui->le_IP, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
+    connect(this->ui->le_PORT, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
     connect(this->ui->sb_poll_timer, QOverload<int>::of(&QSpinBox::valueChanged), [this](int value){
         emit poll_timer_changed(value);
     });
