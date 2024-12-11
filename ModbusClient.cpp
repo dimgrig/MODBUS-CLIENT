@@ -16,7 +16,7 @@ ModbusClient::ModbusClient(QWidget *parent)
     , ui(new Ui::fmodbus_client)
 {
     ui->setupUi(this);
-    this->on_read_json(this->_mdum);
+    this->on_read_json();
 
 //    auto sp = this->sizePolicy();
 //    sp.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
@@ -117,7 +117,7 @@ void ModbusClient::on_connect()
             //ui->actionConnect->setEnabled(false);
             //ui->actionDisconnect->setEnabled(true);
 
-            this->_reg = this->setupDeviceData(this->_mdum);
+            this->setupDeviceData();
         }
     } else {
         modbusDevice->disconnectDevice();
@@ -167,6 +167,7 @@ void ModbusClient::settings_change() {
     this->_address = this->ui->le_IP->text() + ":" + this->ui->le_PORT->text();
     if (this->modbusDevice) {
         this->modbusDevice->disconnectDevice();
+        this->on_connect();
     }
 }
 
@@ -296,18 +297,25 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
             break;
             case QModbusDataUnit::Coils:
             {
-                QVector<quint16> values {value};
+                QVector<quint16> values {(quint16)value};
                 mdu.setValues(values);
                 this->on_write(mdu);
-                qCDebug(logDebug) << "setRegister" << reg_name << value;
+                //qCDebug(logDebug) << "setRegister" << reg_name << value;
             }
             break;
             case QModbusDataUnit::HoldingRegisters:
             {
-                QVector<quint16> values(4, 0);
-                double_to_usa(invert_double_order(value), &values[0]);
-                mdu.setValues(values);
-                this->on_write(mdu);
+                if (mdu.valueCount() == 4) {
+                    QVector<quint16> values(4, 0);
+                    double_to_usa(invert_double_order(value), &values[0]);
+                    mdu.setValues(values);
+                    this->on_write(mdu);
+                } else if (mdu.valueCount() < 4) {
+                    QVector<quint16> values(2, 0);
+                    uint_to_usa(invert_uint_order(value), &values[0]);
+                    mdu.setValues(values);
+                    this->on_write(mdu);
+                }
                 //qCDebug(logDebug) << "setRegister" << reg_name << value << values;
             }
             break;

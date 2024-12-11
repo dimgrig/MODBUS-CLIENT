@@ -23,9 +23,6 @@ class ModbusClient : public QWidget, public ModbusBase {
 public:
     ModbusClient(QWidget *parent = nullptr);
     ~ModbusClient();
-
-    std::map<QString, QModbusDataUnit> get_mdum() const {return _mdum;};
-    QModbusDataUnitMap get_reg() const {return _reg;};
 signals:
     void read_ready(QModbusDataUnit mdu);
     void poll_timer_changed(int value);
@@ -60,9 +57,6 @@ private:
     ModbusConnection _connection_type = Tcp;
     int _server_address = 1;
     QString _address = "192.168.1.3:502";
-
-    std::map<QString, QModbusDataUnit> _mdum;
-    QModbusDataUnitMap _reg;
 
     bool _request = false;
 };

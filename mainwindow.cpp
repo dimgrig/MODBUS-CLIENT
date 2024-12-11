@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <locale.h>
 #include <QNetworkProxy>
+#include <QScrollArea>
+
+#include <float.h>
+#include <locale.h>
 
 const int StatusTimeout = AQP::MSecPerSecond * 10;
 
@@ -241,31 +244,71 @@ void MainWindow::auth_ok() {
 
 void MainWindow::on_timer() {
     //qCDebug(logDebug()) << "modbus_read_request";
-    auto reg = modbus_client->get_reg();
-    if (reg.contains(QModbusDataUnit::RegisterType::DiscreteInputs)) {
-        this->modbus_client->on_read(QModbusDataUnit::RegisterType::DiscreteInputs,
-                                     reg[QModbusDataUnit::RegisterType::DiscreteInputs].startAddress(),
-                                     reg[QModbusDataUnit::RegisterType::DiscreteInputs].valueCount());
-    }
-    if (reg.contains(QModbusDataUnit::RegisterType::Coils)) {
-        this->modbus_client->on_read(QModbusDataUnit::RegisterType::Coils,
-                                     reg[QModbusDataUnit::RegisterType::Coils].startAddress(),
-                                     reg[QModbusDataUnit::RegisterType::Coils].valueCount());
-    }
-    if (reg.contains(QModbusDataUnit::RegisterType::InputRegisters)) {
-        this->modbus_client->on_read(QModbusDataUnit::RegisterType::InputRegisters,
-                                     reg[QModbusDataUnit::RegisterType::InputRegisters].startAddress(),
-                                     reg[QModbusDataUnit::RegisterType::InputRegisters].valueCount());
-    }
-    if (reg.contains(QModbusDataUnit::RegisterType::HoldingRegisters)) {
-        this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters,
-                                     reg[QModbusDataUnit::RegisterType::HoldingRegisters].startAddress(),
-                                     reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount());
+//    auto reg = modbus_client->get_reg();
+//    unsigned int max_size = 99;
+//    unsigned int size = max_size;
+//    if (reg.contains(QModbusDataUnit::RegisterType::DiscreteInputs)) {
+//        this->modbus_client->on_read(QModbusDataUnit::RegisterType::DiscreteInputs,
+//                                     reg[QModbusDataUnit::RegisterType::DiscreteInputs].startAddress(),
+//                                     reg[QModbusDataUnit::RegisterType::DiscreteInputs].valueCount());
+//    }
+//    if (reg.contains(QModbusDataUnit::RegisterType::Coils)) {
+//        this->modbus_client->on_read(QModbusDataUnit::RegisterType::Coils,
+//                                     reg[QModbusDataUnit::RegisterType::Coils].startAddress(),
+//                                     reg[QModbusDataUnit::RegisterType::Coils].valueCount());
+//    }
+//    if (reg.contains(QModbusDataUnit::RegisterType::InputRegisters)) {
+//        this->modbus_client->on_read(QModbusDataUnit::RegisterType::InputRegisters,
+//                                     reg[QModbusDataUnit::RegisterType::InputRegisters].startAddress(),
+//                                     reg[QModbusDataUnit::RegisterType::InputRegisters].valueCount());
+//    }
+//    if (reg.contains(QModbusDataUnit::RegisterType::HoldingRegisters)) {
+//        for (unsigned int i = reg[QModbusDataUnit::RegisterType::HoldingRegisters].startAddress(); i < reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount(); i = i + max_size) {
+//            if ((i + max_size) > reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount()) {
+//                size = reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount() - i;
+//            }
+//            qCDebug(logDebug()) << "startAddress" << i << "valueCount" << size;
+//            this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters, i, size);
+//        }
+////        this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters,
+////                                     reg[QModbusDataUnit::RegisterType::HoldingRegisters].startAddress(),
+////                                     reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount());
+
+////        this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters,
+////                                     reg[QModbusDataUnit::RegisterType::HoldingRegisters].startAddress(),
+////                                     24);
+////        this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters,
+////                                     100,
+////                                     40);
+//    }
+
+    auto reg_v = modbus_client->get_reg_v();
+    for (const auto &reg : reg_v) {
+        if (reg.contains(QModbusDataUnit::RegisterType::DiscreteInputs)) {
+            this->modbus_client->on_read(QModbusDataUnit::RegisterType::DiscreteInputs,
+                                         reg[QModbusDataUnit::RegisterType::DiscreteInputs].startAddress(),
+                                         reg[QModbusDataUnit::RegisterType::DiscreteInputs].valueCount());
+        }
+        if (reg.contains(QModbusDataUnit::RegisterType::Coils)) {
+            this->modbus_client->on_read(QModbusDataUnit::RegisterType::Coils,
+                                         reg[QModbusDataUnit::RegisterType::Coils].startAddress(),
+                                         reg[QModbusDataUnit::RegisterType::Coils].valueCount());
+        }
+        if (reg.contains(QModbusDataUnit::RegisterType::InputRegisters)) {
+            this->modbus_client->on_read(QModbusDataUnit::RegisterType::InputRegisters,
+                                         reg[QModbusDataUnit::RegisterType::InputRegisters].startAddress(),
+                                         reg[QModbusDataUnit::RegisterType::InputRegisters].valueCount());
+        }
+        if (reg.contains(QModbusDataUnit::RegisterType::HoldingRegisters)) {
+            this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters,
+                                         reg[QModbusDataUnit::RegisterType::HoldingRegisters].startAddress(),
+                                         reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount());
+        }
     }
 }
 
 void MainWindow::modbus_read(QModbusDataUnit mdu) {
-    qCDebug(logDebug()) << mdu.registerType() << mdu.values().size() << mdu.values();
+    qCDebug(logDebug()) << "modbus_read" << mdu.registerType() << mdu.values().size() << mdu.values();
 
     switch (mdu.registerType()) {
         case QModbusDataUnit::DiscreteInputs:
@@ -302,35 +345,65 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
         break;
         case QModbusDataUnit::InputRegisters:
         {
-            for (int i = mdu.startAddress(), j = 0; i < mdu.startAddress() + (int)mdu.valueCount(); i = i + 4, j = j + 4) {
+            for (int i = mdu.startAddress(), j = 0; i < mdu.startAddress() + (int)mdu.valueCount(); ) { //i = i + 4, j = j + 4
+                bool found = false;
                 for (const auto &_mdu : _mdum) {
                     if ((_mdu.second.registerType() == mdu.registerType()) &&
                         (_mdu.second.startAddress() == (mdu.startAddress() + j))) {
                         auto dsb = this->ui->gb3->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                         //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                         if (dsb) {
-                            double v = usa_to_double(&mdu.values()[j]);
-                            dsb->setValue(invert_double_order(v));
+                            if (mdu.valueCount() == 4) {
+                                double v = usa_to_double(&mdu.values()[j]);
+                                dsb->setValue(invert_double_order(v));
+                            } else if (mdu.valueCount() == 2) {
+                                double v = usa_to_uint(&mdu.values()[j]);
+                                dsb->setValue(invert_uint_order(v));
+                            } else {
+                                //TODO
+                            }
+                            i += _mdu.second.valueCount();
+                            j += _mdu.second.valueCount();
+                            found = true;
                         }
                         break;
                     }
+                }
+                if (!found) {
+                    i += 2;
+                    j += 2;
                 }
             }
         }
         case QModbusDataUnit::HoldingRegisters:
         {
-            for (int i = mdu.startAddress(), j = 0; i < mdu.startAddress() + (int)mdu.valueCount(); i = i + 4, j = j + 4) {
+            for (int i = mdu.startAddress(), j = 0; i < mdu.startAddress() + (int)mdu.valueCount(); ) { //i = i + 4, j = j + 4
+                bool found = false;
                 for (const auto &_mdu : _mdum) {
                     if ((_mdu.second.registerType() == mdu.registerType()) &&
                         (_mdu.second.startAddress() == (mdu.startAddress() + j))) {
                         auto dsb = this->ui->gb4->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                         //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                         if (dsb) {
-                            double v = usa_to_double(&mdu.values()[j]);
-                            dsb->setValue(invert_double_order(v));
+                            if (_mdu.second.valueCount() == 4) {
+                                double v = usa_to_double(&mdu.values()[j]);
+                                dsb->setValue(invert_double_order(v));
+                            } else if (_mdu.second.valueCount() == 2) {
+                                double v = usa_to_uint(&mdu.values()[j]);
+                                dsb->setValue(invert_uint_order(v));
+                            } else {
+                                //TODO
+                            }
+                            i += _mdu.second.valueCount();
+                            j += _mdu.second.valueCount();
+                            found = true;
                         }
                         break;
                     }
+                }
+                if (!found) {
+                    i += 2;
+                    j += 2;
                 }
             }
         }
@@ -361,19 +434,58 @@ void MainWindow::HoldingRegistersChanged(double value) {
     }
 }
 
+void create_gb(QGridLayout *gl, QGroupBox *gb) {
+    QGroupBox* gbi = new QGroupBox;
+    //QGridLayout *li = new QGridLayout; //gl
+    //QGroupBox *gbo = new QGroupBox; //gb
+    QVBoxLayout *lo = new QVBoxLayout;
+    QScrollArea* sa = new QScrollArea();
+
+    gbi->setLayout(gl);
+    sa->setWidget(gbi);
+    sa->setWidgetResizable(true);
+    lo->addWidget(sa);
+    gb->setLayout(lo);
+
+    sa->setWidgetResizable(true);
+    sa->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    sa->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+}
+
+void create_dsb(QDoubleSpinBox* dsb, QString &name, const QModbusDataUnit &mdu) {
+    dsb->setObjectName(QString("dsb_") + name);
+    dsb->setMinimumSize({50, 20});
+    if (mdu.valueCount() == 4) {
+        //float or double
+        dsb->setDecimals(2);
+        dsb->setSingleStep(0.01);
+        dsb->setMaximum(DBL_MAX);
+        dsb->setMinimum(DBL_MIN);
+    } else if (mdu.valueCount() == 2) {
+        //int
+        dsb->setDecimals(0);
+        dsb->setSingleStep(1);
+        dsb->setMaximum(INT_MAX);
+        dsb->setMinimum(INT_MIN);
+    } else {
+        //TODO
+    }
+}
+
 void MainWindow::modbus_ui() {
     QGridLayout *gl1 = new QGridLayout(this);
-    this->ui->gb1->setLayout(gl1);
     QGridLayout *gl2 = new QGridLayout(this);
-    this->ui->gb2->setLayout(gl2);
     QGridLayout *gl3 = new QGridLayout(this);
-    this->ui->gb3->setLayout(gl3);
     QGridLayout *gl4 = new QGridLayout(this);
-    this->ui->gb4->setLayout(gl4);
+    create_gb(gl1, this->ui->gb1);
+    create_gb(gl2, this->ui->gb2);
+    create_gb(gl3, this->ui->gb3);
+    create_gb(gl4, this->ui->gb4);
 
     this->_mdum = modbus_client->get_mdum();
+    auto mdum_v = modbus_client->get_sort_by_start_address_mdum_v();
 
-    for (const auto &_mdu : this->_mdum) {
+    for (const auto &_mdu : mdum_v) {
         QString name = _mdu.first;
         auto mdu = _mdu.second;
         qCDebug(logDebug) << name << mdu.startAddress() << mdu.valueCount() << mdu.values();
@@ -407,7 +519,7 @@ void MainWindow::modbus_ui() {
             {
                 auto label = new QLabel(name, this);
                 auto dsb = new QDoubleSpinBox(this);
-                dsb->setObjectName(QString("dsb_") + name);
+                create_dsb(dsb, name, mdu);
 
                 gl3->addWidget(label, ir_v.size(), 0);
                 gl3->addWidget(dsb, ir_v.size(), 1);
@@ -419,7 +531,7 @@ void MainWindow::modbus_ui() {
             {
                 auto label = new QLabel(name, this);
                 auto dsb = new QDoubleSpinBox(this);
-                dsb->setObjectName(QString("dsb_") + name);
+                create_dsb(dsb, name, mdu);
 
                 gl4->addWidget(label, hr_v.size(), 0);
                 gl4->addWidget(dsb, hr_v.size(), 1);
