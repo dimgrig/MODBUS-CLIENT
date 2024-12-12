@@ -353,10 +353,10 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                         auto dsb = this->ui->gb3->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                         //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                         if (dsb) {
-                            if (mdu.valueCount() == 4) {
+                            if (_mdu.second.valueCount() == 4) {
                                 double v = usa_to_double(&mdu.values()[j]);
                                 dsb->setValue(invert_double_order(v));
-                            } else if (mdu.valueCount() == 2) {
+                            } else if (_mdu.second.valueCount() == 2) {
                                 double v = usa_to_uint(&mdu.values()[j]);
                                 dsb->setValue(invert_uint_order(v));
                             } else {
