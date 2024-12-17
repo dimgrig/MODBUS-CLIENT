@@ -54,9 +54,7 @@ private:
     QModbusReply *lastRequest = nullptr;
     QModbusClient *modbusDevice = nullptr;
 
-    ModbusConnection _connection_type = Tcp;
-    int _server_address = 1;
-    QString _address = "192.168.1.3:502";
+    ModbusConnection _connection_type = ModbusTCP;
 
     bool _request = false;
 };

@@ -4,6 +4,7 @@
 #include <QModbusTcpClient>
 #include <QModbusRtuSerialMaster>
 #include <QStandardItemModel>
+#include <QSerialPort>
 #include <QStatusBar>
 #include <QUrl>
 
@@ -18,20 +19,27 @@ ModbusClient::ModbusClient(QWidget *parent)
     ui->setupUi(this);
     this->on_read_json();
 
-//    auto sp = this->sizePolicy();
-//    sp.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-//    sp.setVerticalPolicy(QSizePolicy::MinimumExpanding);
-//    this->setSizePolicy(sp);
+    this->ui->cb_connect_type->addItems(ModbusConnection_sl);
+    this->ui->cb_baudrate->addItems(ModbusBaudRate_sl);
+    this->ui->cb_data_bits->addItems(ModbusDataBits_sl);
+    this->ui->cb_stop_bits->addItems(ModbusStopBits_sl);
+    this->ui->cb_parity->addItems(ModbusParity_sl);
 
-    connect(this->ui->le_IP, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
-    connect(this->ui->le_PORT, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
+    connect(this->ui->cb_connect_type, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModbusClient::on_connect_type);
+    connect(this->ui->le_address, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
+    connect(this->ui->le_ip, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
+    connect(this->ui->le_port, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
+    connect(this->ui->le_com_port, &QLineEdit::editingFinished, this, &ModbusClient::settings_change);
+    connect(this->ui->cb_baudrate, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModbusClient::on_connect_type);
+    connect(this->ui->cb_data_bits, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModbusClient::on_connect_type);
+    connect(this->ui->cb_stop_bits, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModbusClient::on_connect_type);
+    connect(this->ui->cb_parity, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModbusClient::on_connect_type);
     connect(this->ui->sb_poll_timer, QOverload<int>::of(&QSpinBox::valueChanged), [this](int value){
         emit poll_timer_changed(value);
     });
 }
 
-ModbusClient::~ModbusClient()
-{
+ModbusClient::~ModbusClient() {
     if (modbusDevice)
         modbusDevice->disconnectDevice();
     delete modbusDevice;
@@ -41,20 +49,18 @@ int ModbusClient::get_poll_timer() const {
     return this->ui->sb_poll_timer->value();
 }
 
-void ModbusClient::on_connect_type(int index)
-{
+void ModbusClient::on_connect_type(int index) {
+    _connection_type = static_cast<ModbusConnection>(index);
+
     if (modbusDevice) {
         modbusDevice->disconnectDevice();
         delete modbusDevice;
         modbusDevice = nullptr;
     }
 
-    auto type = static_cast<ModbusConnection>(index);
-    if (type == Serial) {
-#if QT_CONFIG(modbus_serialport)
+    if (_connection_type == ModbusSerial) {
         modbusDevice = new QModbusRtuSerialMaster(this);
-#endif
-    } else if (type == Tcp) {
+    } else if (_connection_type == ModbusTCP) {
         modbusDevice = new QModbusTcpClient(this);
     }
 
@@ -65,15 +71,14 @@ void ModbusClient::on_connect_type(int index)
 
             _request = false;
         });
-        //statusBar()->showMessage(modbusDevice->errorString(), 5000);
     });
 
     if (!modbusDevice) {
-        //ui->connectButton->setDisabled(true);
-        if (type == Serial)
+        if (_connection_type == ModbusSerial) {
             qCDebug(logDebug) << (tr("Could not create Modbus master."), 5000);
-        else
+        } else if (_connection_type == ModbusTCP) {
             qCDebug(logDebug) << (tr("Could not create Modbus client."), 5000);
+        }
     } else {
         connect(modbusDevice, &QModbusClient::stateChanged,
                 this, &ModbusClient::onModbusStateChanged);
@@ -88,41 +93,34 @@ void ModbusClient::on_connect()
         return;
 
     if (modbusDevice->state() != QModbusDevice::ConnectedState) {
-        if (_connection_type == Serial) {
-//            modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter,
-//                ui->portEdit->text());
-//#if QT_CONFIG(modbus_serialport)
-//            modbusDevice->setConnectionParameter(QModbusDevice::SerialParityParameter,
-//                m_settingsDialog->settings().parity);
-//            modbusDevice->setConnectionParameter(QModbusDevice::SerialBaudRateParameter,
-//                m_settingsDialog->settings().baud);
-//            modbusDevice->setConnectionParameter(QModbusDevice::SerialDataBitsParameter,
-//                m_settingsDialog->settings().dataBits);
-//            modbusDevice->setConnectionParameter(QModbusDevice::SerialStopBitsParameter,
-//                m_settingsDialog->settings().stopBits);
-//#endif
-        } else {
-            const QUrl url = QUrl::fromUserInput(_address);
-            modbusDevice->setConnectionParameter(QModbusDevice::NetworkPortParameter, url.port());
-            modbusDevice->setConnectionParameter(QModbusDevice::NetworkAddressParameter, url.host());
+        if (_connection_type == ModbusSerial) {
+            modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter, this->ui->le_com_port->text());
+            modbusDevice->setConnectionParameter(QModbusDevice::SerialBaudRateParameter,
+                                                 ModbusBaudRate_from_text(this->ui->cb_baudrate->currentText().toStdString().c_str())); //QSerialPort::Baud19200
+            modbusDevice->setConnectionParameter(QModbusDevice::SerialDataBitsParameter,
+                                                 ModbusDataBits_from_text(this->ui->cb_data_bits->currentText().toStdString().c_str())); //QSerialPort::Data8
+            modbusDevice->setConnectionParameter(QModbusDevice::SerialStopBitsParameter,
+                                                 ModbusStopBits_from_text(this->ui->cb_stop_bits->currentText().toStdString().c_str())); //QSerialPort::OneStop
+            modbusDevice->setConnectionParameter(QModbusDevice::SerialParityParameter,
+                                                 ModbusParity_from_text(this->ui->cb_parity->currentText().toStdString().c_str())); //QSerialPort::EvenParity
+        } else if (_connection_type == ModbusTCP) {
+            modbusDevice->setConnectionParameter(QModbusDevice::NetworkAddressParameter, this->ui->le_ip->text());
+            modbusDevice->setConnectionParameter(QModbusDevice::NetworkPortParameter, this->ui->le_port->text());
         }
         modbusDevice->setTimeout(2000);
         modbusDevice->setNumberOfRetries(3);
         if (!modbusDevice->connectDevice()) {
             qCDebug(logDebug) << tr("Connect failed: ") + modbusDevice->errorString();
         } else {
-            //Sleeper sl;
-            //sl.sleep(5);
-            qCDebug(logDebug) << tr("Connected: ") + _address << modbusDevice->state();
-            //ui->actionConnect->setEnabled(false);
-            //ui->actionDisconnect->setEnabled(true);
-
+            if (_connection_type == ModbusSerial) {
+                qCDebug(logDebug) << tr("Connected: ") + this->ui->le_com_port->text() << modbusDevice->state();
+            } else if (_connection_type == ModbusTCP) {
+                qCDebug(logDebug) << tr("Connected: ") + this->ui->le_ip->text() << modbusDevice->state();
+            }
             this->setupDeviceData();
         }
     } else {
         modbusDevice->disconnectDevice();
-        //ui->actionConnect->setEnabled(true);
-        //ui->actionDisconnect->setEnabled(false);
     }
 }
 
@@ -144,18 +142,16 @@ void ModbusClient::onModbusStateChanged(int state) {
     }
 
     this->ui->le_state->setText(state_str);
-    qCDebug(logDebug()) << modbusDevice->state();
-
-    bool connected = (state != QModbusDevice::UnconnectedState);
-    //ui->actionConnect->setEnabled(!connected);
-    //ui->actionDisconnect->setEnabled(connected);
+    //qCDebug(logDebug()) << modbusDevice->state();
 
     if (state == QModbusDevice::UnconnectedState)
-        qCDebug(logDebug) << tr("Disconnect: ") + _address << modbusDevice->state();
-        //ui->connectButton->setText(tr("Connect"));
+        qCDebug(logDebug) << tr("Disconnect: ") << modbusDevice->state();
     else if (state == QModbusDevice::ConnectedState) {
-        qCDebug(logDebug) << tr("Connect: ") + _address << modbusDevice->state();
-        //ui->connectButton->setText(tr("Disconnect"));
+        if (_connection_type == ModbusSerial) {
+            qCDebug(logDebug) << tr("Connected: ") + this->ui->le_com_port->text() << modbusDevice->state();
+        } else if (_connection_type == ModbusTCP) {
+            qCDebug(logDebug) << tr("Connected: ") + this->ui->le_ip->text() << modbusDevice->state();
+        }
     }
 }
 
@@ -164,7 +160,6 @@ void ModbusClient::onModbusErrorOccurred(QModbusDevice::Error error) {
 }
 
 void ModbusClient::settings_change() {
-    this->_address = this->ui->le_IP->text() + ":" + this->ui->le_PORT->text();
     if (this->modbusDevice) {
         this->modbusDevice->disconnectDevice();
         this->on_connect();
@@ -181,7 +176,7 @@ void ModbusClient::on_read(QModbusDataUnit mdu) {
     if (_request)
         return;
 
-    if (auto *reply = modbusDevice->sendReadRequest(mdu, _server_address)) {
+    if (auto *reply = modbusDevice->sendReadRequest(mdu, this->ui->le_address->text().toInt())) {
         if (!reply->isFinished())
             connect(reply, &QModbusReply::finished, this, &ModbusClient::on_read_ready);
         else
@@ -237,7 +232,7 @@ void ModbusClient::on_write(QModbusDataUnit mdu) {
 
     //statusBar()->clearMessage();
 
-    if (auto *reply = modbusDevice->sendWriteRequest(mdu, _server_address)) {
+    if (auto *reply = modbusDevice->sendWriteRequest(mdu, this->ui->le_address->text().toInt())) {
         if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, this, [this, reply]() {
                 _request = false;
@@ -291,7 +286,6 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
         bool ok = true;
 
         QModbusDataUnit mdu = _mdum[reg_name];
-        //int address = _mdum.at(reg_name).startAddress(); // + 1
 
         switch (table) {
             break;
@@ -335,16 +329,31 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
 }
 
 void ModbusClient::read_config(){
-    //qCDebug(logDebug()) << "cfg.MODBUS_IP" << cfg.MODBUS_IP << cfg.MODBUS_PORT;
-    this->ui->le_IP->setText(cfg.MODBUS_IP);
-    this->ui->le_PORT->setText(QString::number(cfg.MODBUS_PORT));
+    //qCDebug(logDebug()) << "cfg.MODBUS_IP" << cfg.MODBUS_TYPE << cfg.MODBUS_IP << cfg.MODBUS_PORT;
+    this->ui->cb_connect_type->setCurrentText(cfg.MODBUS_TYPE);
+    this->ui->le_address->setText(QString::number(cfg.MODBUS_ADDRESS));
+    this->ui->le_ip->setText(cfg.MODBUS_IP);
+    this->ui->le_port->setText(QString::number(cfg.MODBUS_PORT));
+    this->ui->le_com_port->setText(cfg.MODBUS_SERIAL_PORT);
+    this->ui->cb_baudrate->setCurrentText(ModbusBaudRate_to_text(cfg.MODBUS_BAUDRATE));
+    this->ui->cb_data_bits->setCurrentText(ModbusDataBits_to_text(cfg.MODBUS_DATA_BITS));
+    this->ui->cb_stop_bits->setCurrentText(ModbusStopBits_to_text(cfg.MODBUS_STOP_BITS));
+    this->ui->cb_parity->setCurrentText(cfg.MODBUS_PARITY);
     this->ui->sb_poll_timer->setValue(cfg.MODBUS_POLL_TIMER);
-    this->settings_change();
+
+    this->on_connect_type(this->ui->cb_connect_type->currentIndex());
 }
 
 void ModbusClient::write_config(){
-    cfg.MODBUS_IP = this->ui->le_IP->text();
-    cfg.MODBUS_PORT = this->ui->le_PORT->text().toInt();
+    cfg.MODBUS_TYPE = this->ui->cb_connect_type->currentText();
+    cfg.MODBUS_ADDRESS = this->ui->le_address->text().toInt();
+    cfg.MODBUS_IP = this->ui->le_ip->text();
+    cfg.MODBUS_PORT = this->ui->le_port->text().toInt();
+    cfg.MODBUS_SERIAL_PORT = this->ui->le_com_port->text();
+    cfg.MODBUS_BAUDRATE = ModbusBaudRate_from_text(this->ui->cb_baudrate->currentText().toStdString().c_str());
+    cfg.MODBUS_DATA_BITS = ModbusDataBits_from_text(this->ui->cb_data_bits->currentText().toStdString().c_str());
+    cfg.MODBUS_STOP_BITS = ModbusStopBits_from_text(this->ui->cb_stop_bits->currentText().toStdString().c_str());
+    cfg.MODBUS_PARITY = this->ui->cb_parity->currentText();
     cfg.MODBUS_POLL_TIMER = this->ui->sb_poll_timer->value();
 
     QSettings config("config.ini", QSettings::IniFormat);
@@ -353,8 +362,15 @@ void ModbusClient::write_config(){
 #endif
 
     config.beginGroup("parameters");
+    config.setValue("MODBUS_TYPE", cfg.MODBUS_TYPE);
+    config.setValue("MODBUS_ADDRESS", cfg.MODBUS_ADDRESS);
     config.setValue("MODBUS_IP", cfg.MODBUS_IP);
     config.setValue("MODBUS_PORT", cfg.MODBUS_PORT);
+    config.setValue("MODBUS_SERIAL_PORT", cfg.MODBUS_SERIAL_PORT);
+    config.setValue("MODBUS_BAUDRATE", cfg.MODBUS_BAUDRATE);
+    config.setValue("MODBUS_DATA_BITS", cfg.MODBUS_DATA_BITS);
+    config.setValue("MODBUS_STOP_BITS", cfg.MODBUS_STOP_BITS);
+    config.setValue("MODBUS_PARITY", cfg.MODBUS_PARITY);
     config.setValue("MODBUS_POLL_TIMER", cfg.MODBUS_POLL_TIMER);
     config.endGroup();
 }

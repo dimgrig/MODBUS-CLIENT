@@ -34,6 +34,7 @@ SOURCES += \
     Sleeper.cpp \
     TestRunner.cpp \
     aqp.cpp \
+    enum_macro.cpp \
     functions.cpp \
     macroses.cpp \
     main.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
     Sleeper.h \
     TestRunner.h \
     aqp.h \
+    enum_macro.h \
     functions.h \
     icons.h \
     interfaces.h \
