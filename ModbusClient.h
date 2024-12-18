@@ -38,8 +38,8 @@ public slots:
 
     void setRegister(QModbusDataUnit::RegisterType table, const QString &reg_name, double value);
 
-    void on_write(QString reg_name, unsigned int value);
-    void on_write(QString reg_name, double value);
+//    void on_write(QString reg_name, unsigned int value);
+//    void on_write(QString reg_name, double value);
     void read_config();
     void write_config();
 private slots:

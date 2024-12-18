@@ -260,23 +260,23 @@ void ModbusClient::on_write(QModbusDataUnit::RegisterType type, int startAddress
     this->on_write(QModbusDataUnit(type, startAddress, numberOfEntries));
 }
 
-void ModbusClient::on_write(QString reg_name, unsigned int value) {
-    if (_mdum.count(reg_name) > 0) {
-        QVector<quint16> values(2, 0);
-        uint_to_usa(value, &values[0]);
-        _mdum[reg_name].setValues(values);
-        this->on_write(_mdum.at(reg_name));
-    }
-}
+//void ModbusClient::on_write(QString reg_name, unsigned int value) {
+//    if (_mdum.count(reg_name) > 0) {
+//        QVector<quint16> values(2, 0);
+//        uint_to_usa(value, &values[0]);
+//        _mdum[reg_name].setValues(values);
+//        this->on_write(_mdum.at(reg_name));
+//    }
+//}
 
-void ModbusClient::on_write(QString reg_name, double value) {
-    if (_mdum.count(reg_name) > 0) {
-        QVector<quint16> values(4, 0);
-        double_to_usa(value, &values[0]);
-        _mdum[reg_name].setValues(values);
-        this->on_write(_mdum.at(reg_name));
-    }
-}
+//void ModbusClient::on_write(QString reg_name, double value) {
+//    if (_mdum.count(reg_name) > 0) {
+//        QVector<quint16> values(4, 0);
+//        double_to_usa(value, &values[0]);
+//        _mdum[reg_name].setValues(values);
+//        this->on_write(_mdum.at(reg_name));
+//    }
+//}
 
 void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QString &reg_name, double value) {
     if (!modbusDevice)
@@ -304,9 +304,13 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
                     double_to_usa(invert_double_order(value), &values[0]);
                     mdu.setValues(values);
                     this->on_write(mdu);
-                } else if (mdu.valueCount() < 4) {
+                } else if (mdu.valueCount() == 2) {
                     QVector<quint16> values(2, 0);
                     uint_to_usa(invert_uint_order(value), &values[0]);
+                    mdu.setValues(values);
+                    this->on_write(mdu);
+                } else if (mdu.valueCount() == 1) {
+                    QVector<quint16> values(1, value);
                     mdu.setValues(values);
                     this->on_write(mdu);
                 }
