@@ -166,9 +166,17 @@ std::map<QString, QModbusDataUnit> ModbusBase::update_mdu(QModbusDataUnit::Regis
 }
 
 void ModbusBase::on_read_json() {
-    std::map<std::string, std::string> map;
+    QString filename = ":json/json/modbus.json";
+    //check file in app dir
+    QFileInfo check_file("modbus.json");
+    if (check_file.exists() && check_file.isFile()) {
+        filename = "modbus.json";
+    } else {
+        //else use from resources
+    }
+    qCDebug(logDebug()) << "Modbus table config file" << filename;
 
-    QScopedPointer<QFile> mapFile(new QFile(":json/json/modbus.json"));
+    QScopedPointer<QFile> mapFile(new QFile(filename));
     mapFile.data()->open(QIODevice::ReadOnly);
     QString val = mapFile.data()->readAll();
     mapFile.data()->close();
@@ -178,6 +186,7 @@ void ModbusBase::on_read_json() {
     QJsonArray json_array = doc.array();
     //qCDebug(logDebug()) << doc.isArray() << json_array.size();
 
+    //std::map<std::string, std::string> map;
 //    QVariantMap dataMap = (((mainMap[(index + "_map").c_str()].toMap())["mappings"].toMap())[index.c_str()].toMap())["properties"].toMap();
 //    QVariantMap dataMap = mainMap;
 
