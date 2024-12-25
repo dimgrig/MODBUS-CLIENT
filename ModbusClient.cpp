@@ -298,13 +298,29 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
             }
             break;
             case QModbusDataUnit::HoldingRegisters:
-            {
-                if (mdu.valueCount() == 4) {
+            {            
+                auto reg_type_m = this->get_reg_type_m();
+                QString reg_type = "double";
+                if (reg_type_m.count(reg_name) > 0) {
+                    reg_type = reg_type_m[reg_name];
+                }
+
+                if ((mdu.valueCount() == 4) && (reg_type.toLower().contains("double"))) {
                     QVector<quint16> values(4, 0);
                     double_to_usa(invert_double_order(value), &values[0]);
                     mdu.setValues(values);
                     this->on_write(mdu);
-                } else if (mdu.valueCount() == 2) {
+                } else if ((mdu.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
+                    QVector<quint16> values(4, 0);
+                    long_to_usa(invert_long_order(value), &values[0]);
+                    mdu.setValues(values);
+                    this->on_write(mdu);
+                } else if ((mdu.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
+                    QVector<quint16> values(2, 0);
+                    float_to_usa(invert_float_order(value), &values[0]);
+                    mdu.setValues(values);
+                    this->on_write(mdu);
+                } else if ((mdu.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
                     QVector<quint16> values(2, 0);
                     uint_to_usa(invert_uint_order(value), &values[0]);
                     mdu.setValues(values);
@@ -313,6 +329,8 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
                     QVector<quint16> values(1, value);
                     mdu.setValues(values);
                     this->on_write(mdu);
+                } else {
+
                 }
                 //qCDebug(logDebug) << "setRegister" << reg_name << value << values;
             }

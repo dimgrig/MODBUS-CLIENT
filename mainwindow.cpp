@@ -314,11 +314,23 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                         auto dsb = this->ui->gb3->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                         //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                         if (dsb) {
-                            if (_mdu.second.valueCount() == 4) {
+                            auto reg_type_m = modbus_client->get_reg_type_m();
+                            QString reg_type = "double";
+                            if (reg_type_m.count(_mdu.first) > 0) {
+                                reg_type = reg_type_m[_mdu.first];
+                            }
+
+                            if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("double"))) {
                                 double v = usa_to_double(&mdu.values()[j]);
                                 dsb->setValue(invert_double_order(v));
-                            } else if (_mdu.second.valueCount() == 2) {
-                                double v = usa_to_uint(&mdu.values()[j]);
+                            } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
+                                long v = usa_to_long(&mdu.values()[j]);
+                                dsb->setValue(invert_long_order(v));
+                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
+                                float v = usa_to_float(&mdu.values()[j]);
+                                dsb->setValue(invert_float_order(v));
+                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
+                                unsigned int v = usa_to_uint(&mdu.values()[j]);
                                 dsb->setValue(invert_uint_order(v));
                             } else if (_mdu.second.valueCount() == 1) {
                                 dsb->setValue(mdu.values()[j]);
@@ -348,14 +360,28 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                         auto dsb = this->ui->gb4->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                         //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                         if (dsb) {
-                            if (_mdu.second.valueCount() == 4) {
+                            auto reg_type_m = modbus_client->get_reg_type_m();
+                            QString reg_type = "double";
+                            if (reg_type_m.count(_mdu.first) > 0) {
+                                reg_type = reg_type_m[_mdu.first];
+                            }
+
+                            if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("double"))) {
                                 double v = usa_to_double(&mdu.values()[j]);
                                 dsb->setValue(invert_double_order(v));
-                            } else if (_mdu.second.valueCount() == 2) {
-                                double v = usa_to_uint(&mdu.values()[j]);
+                            } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
+                                long v = usa_to_long(&mdu.values()[j]);
+                                dsb->setValue(invert_long_order(v));
+                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
+                                float v = usa_to_float(&mdu.values()[j]);
+                                dsb->setValue(invert_float_order(v));
+                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
+                                unsigned int v = usa_to_uint(&mdu.values()[j]);
                                 dsb->setValue(invert_uint_order(v));
-                            } else {
+                            } else if (_mdu.second.valueCount() == 1) {
                                 dsb->setValue(mdu.values()[j]);
+                            } else {
+
                             }
                             i += _mdu.second.valueCount();
                             j += _mdu.second.valueCount();
