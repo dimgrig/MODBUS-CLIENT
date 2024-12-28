@@ -324,7 +324,7 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                                 double v = usa_to_double(&mdu.values()[j]);
                                 dsb->setValue(invert_double_order(v));
                             } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
-                                long v = usa_to_long(&mdu.values()[j]);
+                                long long v = usa_to_long(&mdu.values()[j]);
                                 dsb->setValue(invert_long_order(v));
                             } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
                                 float v = usa_to_float(&mdu.values()[j]);
@@ -370,7 +370,7 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                                 double v = usa_to_double(&mdu.values()[j]);
                                 dsb->setValue(invert_double_order(v));
                             } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
-                                long v = usa_to_long(&mdu.values()[j]);
+                                long long v = usa_to_long(&mdu.values()[j]);
                                 dsb->setValue(invert_long_order(v));
                             } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
                                 float v = usa_to_float(&mdu.values()[j]);
