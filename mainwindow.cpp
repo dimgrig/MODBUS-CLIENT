@@ -350,6 +350,7 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                 }
             }
         }
+        break;
         case QModbusDataUnit::HoldingRegisters:
         {
             for (int i = mdu.startAddress(), j = 0; i < mdu.startAddress() + (int)mdu.valueCount(); ) { //i = i + 4, j = j + 4
@@ -442,6 +443,7 @@ void create_gb(QGridLayout *gl, QGroupBox *gb) {
 }
 
 void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_type, const QModbusDataUnit &mdu) {
+    Q_UNUSED(mdu);
     dsb->setObjectName(QString("dsb_") + name);
     dsb->setMinimumSize({50, 20});
     if (reg_type.toLower().contains("float") || reg_type.toLower().contains("double")) {
@@ -450,12 +452,30 @@ void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_typ
         dsb->setSingleStep(0.01);
         dsb->setMaximum(DBL_MAX);
         dsb->setMinimum(-DBL_MAX);
-    } else if (reg_type.toLower().contains("uint") || reg_type.toLower().contains("int") || reg_type.toLower().contains("long")) {
+    } else if (reg_type.toLower().contains("uint")) {
+        //int
+        dsb->setDecimals(0);
+        dsb->setSingleStep(1);
+        dsb->setMaximum(UINT_MAX);
+        dsb->setMinimum(-UINT_MAX);
+    } else if (reg_type.toLower().contains("int")) {
         //int
         dsb->setDecimals(0);
         dsb->setSingleStep(1);
         dsb->setMaximum(INT_MAX);
         dsb->setMinimum(-INT_MAX);
+    } else if (reg_type.toLower().contains("ulong")) {
+        //int
+        dsb->setDecimals(0);
+        dsb->setSingleStep(1);
+        dsb->setMaximum((double)ULONG_MAX);
+        dsb->setMinimum((double)-LONG_MAX);
+    } else if (reg_type.toLower().contains("long")) {
+        //int
+        dsb->setDecimals(0);
+        dsb->setSingleStep(1);
+        dsb->setMaximum((double)LONG_MAX);
+        dsb->setMinimum((double)-LONG_MAX);
     } else {
         //TODO
     }

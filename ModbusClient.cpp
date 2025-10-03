@@ -75,9 +75,9 @@ void ModbusClient::on_connect_type(int index) {
 
     if (!modbusDevice) {
         if (_connection_type == ModbusSerial) {
-            qCDebug(logDebug) << (tr("Could not create Modbus master."), 5000);
+            qCDebug(logDebug) << (tr("Could not create Modbus master."));
         } else if (_connection_type == ModbusTCP) {
-            qCDebug(logDebug) << (tr("Could not create Modbus client."), 5000);
+            qCDebug(logDebug) << (tr("Could not create Modbus client."));
         }
     } else {
         connect(modbusDevice, &QModbusClient::stateChanged,
@@ -107,8 +107,8 @@ void ModbusClient::on_connect()
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkAddressParameter, this->ui->le_ip->text());
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkPortParameter, this->ui->le_port->text());
         }
-        modbusDevice->setTimeout(2000);
-        modbusDevice->setNumberOfRetries(3);
+        modbusDevice->setTimeout(200);
+        modbusDevice->setNumberOfRetries(0);
         if (!modbusDevice->connectDevice()) {
             qCDebug(logDebug) << tr("Connect failed: ") + modbusDevice->errorString();
         } else {
@@ -182,7 +182,7 @@ void ModbusClient::on_read(QModbusDataUnit mdu) {
         else
             delete reply; // broadcast replies return immediately
     } else {
-        qCDebug(logDebug) << (tr("Read error: ") + modbusDevice->errorString(), 5000);
+        qCDebug(logDebug) << (tr("Read error: ") + modbusDevice->errorString());
     }
 }
 
@@ -210,11 +210,11 @@ void ModbusClient::on_read_ready() {
     } else if (reply->error() == QModbusDevice::ProtocolError) {
         qCDebug(logDebug) << (tr("Read response error: %1 (Mobus exception: 0x%2)").
                                     arg(reply->errorString()).
-                                    arg(reply->rawResult().exceptionCode(), -1, 16), 5000);
+                                    arg(reply->rawResult().exceptionCode(), -1, 16));
     } else {
         qCDebug(logDebug) << (tr("Read response error: %1 (code: 0x%2)").
                                     arg(reply->errorString()).
-                                    arg(reply->error(), -1, 16), 5000);
+                                    arg(reply->error(), -1, 16));
     }
 
     reply->deleteLater();
@@ -238,11 +238,10 @@ void ModbusClient::on_write(QModbusDataUnit mdu) {
                 _request = false;
                 if (reply->error() == QModbusDevice::ProtocolError) {
                     qCDebug(logDebug) << (QString("Write response error: %1 (Mobus exception: 0x%2)")
-                        .arg(reply->errorString()).arg(reply->rawResult().exceptionCode(), -1, 16),
-                        5000);
+                        .arg(reply->errorString()).arg(reply->rawResult().exceptionCode(), -1, 16));
                 } else if (reply->error() != QModbusDevice::NoError) {
                     qCDebug(logDebug) << (QString("Write response error: %1 (code: 0x%2)").
-                        arg(reply->errorString()).arg(reply->error(), -1, 16), 5000);
+                        arg(reply->errorString()).arg(reply->error(), -1, 16));
                 }
                 reply->deleteLater();
             });
@@ -252,7 +251,7 @@ void ModbusClient::on_write(QModbusDataUnit mdu) {
             reply->deleteLater();
         }
     } else {
-        qCDebug(logDebug) << (tr("Write error: ") + modbusDevice->errorString(), 5000);
+        qCDebug(logDebug) << (tr("Write error: ") + modbusDevice->errorString());
     }
 }
 
@@ -340,8 +339,7 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
             break;
         }
 //        if (!ok)
-//            statusBar()->showMessage(tr("Could not set register: ") + modbusDevice->errorString(),
-//                                     5000);
+//            statusBar()->showMessage(tr("Could not set register: ") + modbusDevice->errorString());
     }
 
     // qCDebug(logDebug()) << _mdum.size();
