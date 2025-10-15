@@ -305,4 +305,39 @@
         "DataLength": 1,
         "RegisterName": "safety_timeout"
     }
+
+    ,
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 53,
+        "Address": 40050,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "stepper_test"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 54,
+        "Address": 40051,
+        "RegisterType": "System.Int32",
+        "DataLength": 2,
+        "RegisterName": "stepper_steps"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 55,
+        "Address": 40053,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "stepper_speed"
+    }
 ]

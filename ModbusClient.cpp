@@ -331,7 +331,7 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
                 } else {
 
                 }
-                //qCDebug(logDebug) << "setRegister" << reg_name << value << values;
+                //qCDebug(logDebug) << "setRegister" << reg_name << value << mdu.values();
             }
             break;
             default:
