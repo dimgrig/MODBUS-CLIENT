@@ -37,6 +37,10 @@ ModbusClient::ModbusClient(QWidget *parent)
     connect(this->ui->sb_poll_timer, QOverload<int>::of(&QSpinBox::valueChanged), [this](int value){
         emit poll_timer_changed(value);
     });
+
+    _reconnectTimer = new QTimer(this);
+    _reconnectTimer->setSingleShot(true);
+    connect(_reconnectTimer, &QTimer::timeout, this, &ModbusClient::on_connect);
 }
 
 ModbusClient::~ModbusClient() {
@@ -64,14 +68,12 @@ void ModbusClient::on_connect_type(int index) {
         modbusDevice = new QModbusTcpClient(this);
     }
 
-    connect(modbusDevice, &QModbusClient::errorOccurred, [this](QModbusDevice::Error) {
-        qCDebug(logDebug()) << modbusDevice->errorString();
-        QTimer::singleShot(1000, [=]() {
-            this->on_connect();
-
-            _request = false;
-        });
-    });
+    // connect(modbusDevice, &QModbusClient::errorOccurred, [this](QModbusDevice::Error) {
+    //     qCDebug(logDebug()) << modbusDevice->errorString();
+    //     QTimer::singleShot(1000, [=]() {
+    //         this->on_connect();
+    //     });
+    // });
 
     if (!modbusDevice) {
         if (_connection_type == ModbusSerial) {
@@ -92,6 +94,12 @@ void ModbusClient::on_connect()
     if (!modbusDevice)
         return;
 
+    if (!_requestQueue.isEmpty()) {
+        qCDebug(logDebug) << "Clearing request queue on reconnect, size:" << _requestQueue.size();
+        _requestQueue.clear();
+    }
+    _processingQueue = false;
+
     if (modbusDevice->state() != QModbusDevice::ConnectedState) {
         if (_connection_type == ModbusSerial) {
             modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter, this->ui->le_com_port->text());
@@ -107,7 +115,7 @@ void ModbusClient::on_connect()
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkAddressParameter, this->ui->le_ip->text());
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkPortParameter, this->ui->le_port->text());
         }
-        modbusDevice->setTimeout(200);
+        modbusDevice->setTimeout(2000);
         modbusDevice->setNumberOfRetries(0);
         if (!modbusDevice->connectDevice()) {
             qCDebug(logDebug) << tr("Connect failed: ") + modbusDevice->errorString();
@@ -153,10 +161,20 @@ void ModbusClient::onModbusStateChanged(int state) {
             qCDebug(logDebug) << tr("Connected: ") + this->ui->le_ip->text() << modbusDevice->state();
         }
     }
+
+    if (state == QModbusDevice::ConnectedState) {
+        _failedAttempts = 0;
+    }
 }
 
 void ModbusClient::onModbusErrorOccurred(QModbusDevice::Error error) {
     qCDebug(logDebug) << error;
+
+    // Для критических ошибок увеличиваем счетчик
+    if (error != QModbusDevice::NoError) {
+        _failedAttempts++;
+        scheduleReconnect();
+    }
 }
 
 void ModbusClient::settings_change() {
@@ -173,16 +191,39 @@ void ModbusClient::on_read(QModbusDataUnit mdu) {
     if (modbusDevice->state() != QModbusDevice::ConnectedState)
         return;
 
-    if (_request)
+    if (_processingQueue) {
+        if (_requestQueue.size() < MAX_QUEUE_SIZE) {
+            _requestQueue.enqueue(mdu);
+        }
         return;
+    }
 
+    _processingQueue = true;
+    sendSingleRequest(mdu);
+}
+
+void ModbusClient::sendSingleRequest(QModbusDataUnit mdu) {
     if (auto *reply = modbusDevice->sendReadRequest(mdu, this->ui->le_address->text().toInt())) {
-        if (!reply->isFinished())
+        if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, this, &ModbusClient::on_read_ready);
-        else
-            delete reply; // broadcast replies return immediately
+        } else {
+            _processingQueue = false;
+            processNextRequest();
+            delete reply;
+        }
     } else {
-        qCDebug(logDebug) << (tr("Read error: ") + modbusDevice->errorString());
+        _processingQueue = false;
+        _failedAttempts++;
+        scheduleReconnect();
+        processNextRequest();
+    }
+}
+
+void ModbusClient::processNextRequest() {
+    if (!_requestQueue.isEmpty()) {
+        QModbusDataUnit nextRequest = _requestQueue.dequeue();
+        _processingQueue = true;
+        sendSingleRequest(nextRequest);
     }
 }
 
@@ -191,22 +232,17 @@ void ModbusClient::on_read(QModbusDataUnit::RegisterType type, int startAddress,
 }
 
 void ModbusClient::on_read_ready() {
-    _request = false;
-
     auto reply = qobject_cast<QModbusReply *>(sender());
-    if (!reply)
+    if (!reply) {
+        _processingQueue = false;  // Добавить эту строку!
+        processNextRequest();      // И эту!
         return;
+    }
 
     if (reply->error() == QModbusDevice::NoError) {
         const QModbusDataUnit unit = reply->result();
-//        for (int i = 0, total = int(unit.valueCount()); i < total; ++i) {
-//            const QString entry = tr("Address: %1, Value: %2").arg(unit.startAddress() + i)
-//                                     .arg(QString::number(unit.value(i),
-//                                          unit.registerType() <= QModbusDataUnit::Coils ? 10 : 16));
-//            //ui->readValue->addItem(entry);
-//            qCDebug(logDebug) << entry;
-//        }
         emit read_ready(unit);
+        _failedAttempts = 0;
     } else if (reply->error() == QModbusDevice::ProtocolError) {
         qCDebug(logDebug) << (tr("Read response error: %1 (Mobus exception: 0x%2)").
                                     arg(reply->errorString()).
@@ -215,9 +251,18 @@ void ModbusClient::on_read_ready() {
         qCDebug(logDebug) << (tr("Read response error: %1 (code: 0x%2)").
                                     arg(reply->errorString()).
                                     arg(reply->error(), -1, 16));
+
+        // Для таймаутов планируем переподключение
+        if (reply->error() == QModbusDevice::TimeoutError ||
+            reply->error() == QModbusDevice::ConnectionError) {
+            _failedAttempts++;
+            scheduleReconnect();
+        }
     }
 
     reply->deleteLater();
+    _processingQueue = false;  // Добавить эту строку!
+    processNextRequest();      // И эту - ВАЖНО!
 }
 
 void ModbusClient::on_write(QModbusDataUnit mdu) {
@@ -227,15 +272,11 @@ void ModbusClient::on_write(QModbusDataUnit mdu) {
     if (modbusDevice->state() != QModbusDevice::ConnectedState)
         return;
 
-    if (_request)
-        return;
-
     //statusBar()->clearMessage();
 
     if (auto *reply = modbusDevice->sendWriteRequest(mdu, this->ui->le_address->text().toInt())) {
         if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, this, [this, reply]() {
-                _request = false;
                 if (reply->error() == QModbusDevice::ProtocolError) {
                     qCDebug(logDebug) << (QString("Write response error: %1 (Mobus exception: 0x%2)")
                         .arg(reply->errorString()).arg(reply->rawResult().exceptionCode(), -1, 16));
@@ -246,7 +287,6 @@ void ModbusClient::on_write(QModbusDataUnit mdu) {
                 reply->deleteLater();
             });
         } else {
-            _request = false;
             // broadcast replies return immediately
             reply->deleteLater();
         }
@@ -393,4 +433,24 @@ void ModbusClient::write_config(){
     config.setValue("MODBUS_PARITY", cfg.MODBUS_PARITY);
     config.setValue("MODBUS_POLL_TIMER", cfg.MODBUS_POLL_TIMER);
     config.endGroup();
+}
+
+void ModbusClient::scheduleReconnect() {
+    if (_failedAttempts >= MAX_FAILED_ATTEMPTS) {
+        qCDebug(logDebug) << "Max failed attempts reached, waiting before reconnect";
+        _reconnectTimer->start(5000);
+    } else {
+        // Исправленный exponential backoff: 1s, 2s, 4s...
+        int delay = 1000 * (1 << (_failedAttempts - 1));
+        delay = qMin(delay, 5000); // Максимум 5 секунд
+        qCDebug(logDebug) << "Scheduling reconnect in" << delay << "ms, attempt" << _failedAttempts;
+        _reconnectTimer->start(delay);
+    }
+
+    // Очищаем очередь при планировании переподключения
+    if (!_requestQueue.isEmpty()) {
+        qCDebug(logDebug) << "Clearing queue due to reconnect, had" << _requestQueue.size() << "pending requests";
+        _requestQueue.clear();
+    }
+    _processingQueue = false;
 }

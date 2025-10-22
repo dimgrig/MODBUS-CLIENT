@@ -15,8 +15,30 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 2,
+        "Index": 1,
         "Address": 30002,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "protection_pressure"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 1,
+        "Address": 30004,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "leak_speed"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 2,
+        "Address": 30006,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "system_status"
@@ -27,7 +49,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 3,
-        "Address": 30003,
+        "Address": 30007,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "error_code"
@@ -38,7 +60,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 4,
-        "Address": 30004,
+        "Address": 30008,
         "RegisterType": "System.UInt32",
         "DataLength": 2,
         "RegisterName": "operation_time"
@@ -49,7 +71,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 5,
-        "Address": 30006,
+        "Address": 30010,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "raw_adc_value"
@@ -60,7 +82,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 6,
-        "Address": 30007,
+        "Address": 30011,
         "RegisterType": "System.Float",
         "DataLength": 2,
         "RegisterName": "current_temperature"
@@ -71,7 +93,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 7,
-        "Address": 30009,
+        "Address": 30013,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "firmware_major"
@@ -82,7 +104,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 8,
-        "Address": 30010,
+        "Address": 30014,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "firmware_minor"
@@ -93,7 +115,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 9,
-        "Address": 30011,
+        "Address": 30015,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "firmware_patch"
@@ -104,7 +126,7 @@
         "PageName": "",
         "PageType": 0,
         "Index": 10,
-        "Address": 30012,
+        "Address": 30016,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "hardware_version"
@@ -157,6 +179,61 @@
         "RegisterName": "static_pump_power"
     },
 
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 5,
+        "Address": 40005,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "systolic_pressure"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 6,
+        "Address": 40007,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "diastolic_pressure"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 7,
+        "Address": 40009,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "pulse_rate"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 8,
+        "Address": 40010,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "piston_volume"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 9,
+        "Address": 40012,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "pulse_waveform"
+    },
 
 
 
@@ -304,5 +381,40 @@
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "safety_timeout"
+    }
+
+    ,
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 53,
+        "Address": 40050,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "stepper_test"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 54,
+        "Address": 40051,
+        "RegisterType": "System.Int32",
+        "DataLength": 2,
+        "RegisterName": "stepper_steps"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 55,
+        "Address": 40053,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "stepper_speed"
     }
 ]

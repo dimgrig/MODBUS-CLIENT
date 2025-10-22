@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QModbusDevice>
+#include <QQueue>
 
 #include "Config.h"
 
@@ -32,6 +33,8 @@ public slots:
     void on_connect();
 
     void on_read(QModbusDataUnit mdu);
+    void sendSingleRequest(QModbusDataUnit mdu);
+    void processNextRequest();
     void on_write(QModbusDataUnit mdu);
     void on_read(QModbusDataUnit::RegisterType type, int startAddress, quint16 numberOfEntries);
     void on_write(QModbusDataUnit::RegisterType type, int startAddress, quint16 numberOfEntries);
@@ -49,6 +52,8 @@ private slots:
 
     void on_read_ready();
 private:
+    void scheduleReconnect();
+
     Ui::fmodbus_client *ui;
 
     QModbusReply *lastRequest = nullptr;
@@ -56,7 +61,14 @@ private:
 
     ModbusConnection _connection_type = ModbusTCP;
 
-    bool _request = false;
+    bool _requestInProgress = false;
+    QTimer *_reconnectTimer = nullptr;
+    int _failedAttempts = 0;
+    const int MAX_FAILED_ATTEMPTS = 3;
+
+    QQueue<QModbusDataUnit> _requestQueue;
+    bool _processingQueue = false;
+    const int MAX_QUEUE_SIZE = 3;
 };
 
 #endif // MODBUSCLIENT_H
