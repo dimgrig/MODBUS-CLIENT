@@ -115,7 +115,7 @@ void ModbusClient::on_connect()
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkAddressParameter, this->ui->le_ip->text());
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkPortParameter, this->ui->le_port->text());
         }
-        modbusDevice->setTimeout(2000);
+        modbusDevice->setTimeout(1000);
         modbusDevice->setNumberOfRetries(0);
         if (!modbusDevice->connectDevice()) {
             qCDebug(logDebug) << tr("Connect failed: ") + modbusDevice->errorString();
@@ -128,7 +128,7 @@ void ModbusClient::on_connect()
             this->setupDeviceData();
         }
     } else {
-        modbusDevice->disconnectDevice();
+        //modbusDevice->disconnectDevice();
     }
 }
 
@@ -168,7 +168,7 @@ void ModbusClient::onModbusStateChanged(int state) {
 }
 
 void ModbusClient::onModbusErrorOccurred(QModbusDevice::Error error) {
-    qCDebug(logDebug) << error;
+    qCDebug(logDebug) << error << modbusDevice->errorString();
 
     // Для критических ошибок увеличиваем счетчик
     if (error != QModbusDevice::NoError) {
@@ -251,18 +251,11 @@ void ModbusClient::on_read_ready() {
         qCDebug(logDebug) << (tr("Read response error: %1 (code: 0x%2)").
                                     arg(reply->errorString()).
                                     arg(reply->error(), -1, 16));
-
-        // Для таймаутов планируем переподключение
-        if (reply->error() == QModbusDevice::TimeoutError ||
-            reply->error() == QModbusDevice::ConnectionError) {
-            _failedAttempts++;
-            scheduleReconnect();
-        }
     }
 
     reply->deleteLater();
-    _processingQueue = false;  // Добавить эту строку!
-    processNextRequest();      // И эту - ВАЖНО!
+    _processingQueue = false;
+    processNextRequest();
 }
 
 void ModbusClient::on_write(QModbusDataUnit mdu) {

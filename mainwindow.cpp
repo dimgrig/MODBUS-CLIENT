@@ -296,7 +296,9 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                         (_mdu.second.startAddress() == (mdu.startAddress() + j))) {
                         auto cb = this->ui->gb2->findChild<QCheckBox*>("cb_" + _mdu.first);
                         if (cb) {
+                            disconnect(cb, &QCheckBox::clicked, this, &MainWindow::CoilsChanged);
                             cb->setChecked(mdu.value(j));
+                            connect(cb, &QCheckBox::clicked, this, &MainWindow::CoilsChanged);
                         }
                         break;
                     }
@@ -361,6 +363,12 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                         auto dsb = this->ui->gb4->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                         //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                         if (dsb) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                            disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+#endif
+#if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                            disconnect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+#endif
                             auto reg_type_m = modbus_client->get_reg_type_m();
                             QString reg_type = "double";
                             if (reg_type_m.count(_mdu.first) > 0) {
@@ -390,6 +398,13 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                             i += _mdu.second.valueCount();
                             j += _mdu.second.valueCount();
                             found = true;
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                            connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+#endif
+#if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                            connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+#endif
                         }
                         break;
                     }
@@ -422,7 +437,7 @@ void MainWindow::HoldingRegistersChanged(double value) {
     if (sender) {
         QString reg_name = sender->objectName();
         reg_name = reg_name.remove("dsb_");
-        //qCDebug(logDebug()) << reg_name << value;
+        qCDebug(logDebug()) << reg_name << value;
         this->modbus_client->setRegister(QModbusDataUnit::HoldingRegisters, reg_name, value);
     }
 }
