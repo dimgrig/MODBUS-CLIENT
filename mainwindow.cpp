@@ -331,9 +331,12 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                             } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
                                 float v = usa_to_float(&mdu.values()[j]);
                                 dsb->setValue(invert_float_order(v));
-                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
+                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("uint"))) {
                                 unsigned int v = usa_to_uint(&mdu.values()[j]);
                                 dsb->setValue(invert_uint_order(v));
+                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
+                                unsigned int v = usa_to_int(&mdu.values()[j]);
+                                dsb->setValue(invert_int_order(v));
                             } else if (_mdu.second.valueCount() == 1) {
                                 dsb->setValue(mdu.values()[j]);
                             } else {
