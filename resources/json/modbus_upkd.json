@@ -15,30 +15,8 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 1,
-        "Address": 30002,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "protection_pressure"
-    },
-    {
-        "ObjName": "INPUT",
-        "ObjType": 30000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 1,
-        "Address": 30004,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "leak_speed"
-    },
-    {
-        "ObjName": "INPUT",
-        "ObjType": 30000,
-        "PageName": "",
-        "PageType": 0,
         "Index": 2,
-        "Address": 30006,
+        "Address": 30002,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "system_status"
@@ -48,19 +26,19 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 2,
-        "Address": 30007,
+        "Index": 3,
+        "Address": 30003,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
-        "RegisterName": "mode_done"
+        "RegisterName": "mode_state"
     },
     {
         "ObjName": "INPUT",
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 3,
-        "Address": 30008,
+        "Index": 4,
+        "Address": 30004,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "error_code"
@@ -70,8 +48,52 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 4,
-        "Address": 30009,
+        "Index": 5,
+        "Address": 30005,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "mode_done"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 6,
+        "Address": 30006,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "protection_pressure"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 7,
+        "Address": 30008,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "leak_speed"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 8,
+        "Address": 30010,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "release_speed"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 9,
+        "Address": 30012,
         "RegisterType": "System.UInt32",
         "DataLength": 2,
         "RegisterName": "operation_time"
@@ -81,8 +103,8 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 5,
-        "Address": 30011,
+        "Index": 10,
+        "Address": 30014,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "raw_adc_value"
@@ -92,8 +114,8 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 6,
-        "Address": 30012,
+        "Index": 11,
+        "Address": 30015,
         "RegisterType": "System.Float",
         "DataLength": 2,
         "RegisterName": "current_temperature"
@@ -103,8 +125,8 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 7,
-        "Address": 30014,
+        "Index": 12,
+        "Address": 30017,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "firmware_major"
@@ -114,8 +136,8 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 8,
-        "Address": 30015,
+        "Index": 13,
+        "Address": 30018,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "firmware_minor"
@@ -125,8 +147,8 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 9,
-        "Address": 30016,
+        "Index": 14,
+        "Address": 30019,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "firmware_patch"
@@ -136,13 +158,12 @@
         "ObjType": 30000,
         "PageName": "",
         "PageType": 0,
-        "Index": 10,
-        "Address": 30017,
+        "Index": 15,
+        "Address": 30020,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
         "RegisterName": "hardware_version"
     },
-
 
 
     {
@@ -250,7 +271,7 @@
         "ObjType": 40000,
         "PageName": "",
         "PageType": 0,
-        "Index": 9,
+        "Index": 10,
         "Address": 40013,
         "RegisterType": "System.UInt32",
         "DataLength": 2,
@@ -261,15 +282,89 @@
         "ObjType": 40000,
         "PageName": "",
         "PageType": 0,
-        "Index": 9,
+        "Index": 11,
         "Address": 40015,
         "RegisterType": "System.Float",
         "DataLength": 2,
         "RegisterName": "pressure_delta_threshold"
     },
-
-
-
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 12,
+        "Address": 40017,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "leak_test_pressure"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 13,
+        "Address": 40019,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "leak_wait_duration"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 14,
+        "Address": 40020,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "leak_test_duration"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 15,
+        "Address": 40021,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "max_allowed_leak_rate"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 16,
+        "Address": 40023,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "pressure_release_start"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 17,
+        "Address": 40025,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "pressure_release_end"
+    },
+    {
+        "ObjName": "HOLDING",
+        "ObjType": 40000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 18,
+        "Address": 40027,
+        "RegisterType": "System.UInt32",
+        "DataLength": 2,
+        "RegisterName": "max_release_duration"
+    },
     {
         "ObjName": "HOLDING",
         "ObjType": 40000,
