@@ -313,38 +313,76 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                 for (const auto &_mdu : _mdum) {
                     if ((_mdu.second.registerType() == mdu.registerType()) &&
                         (_mdu.second.startAddress() == (mdu.startAddress() + j))) {
-                        auto dsb = this->ui->gb3->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
-                        //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
-                        if (dsb) {
-                            auto reg_type_m = modbus_client->get_reg_type_m();
-                            QString reg_type = "double";
-                            if (reg_type_m.count(_mdu.first) > 0) {
-                                reg_type = reg_type_m[_mdu.first];
-                            }
 
-                            if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("double"))) {
-                                double v = usa_to_double(&mdu.values()[j]);
-                                dsb->setValue(invert_double_order(v));
-                            } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
-                                long long v = usa_to_long(&mdu.values()[j]);
-                                dsb->setValue(invert_long_order(v));
-                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
-                                float v = usa_to_float(&mdu.values()[j]);
-                                dsb->setValue(invert_float_order(v));
-                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("uint"))) {
-                                unsigned int v = usa_to_uint(&mdu.values()[j]);
-                                dsb->setValue(invert_uint_order(v));
-                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
-                                unsigned int v = usa_to_int(&mdu.values()[j]);
-                                dsb->setValue(invert_int_order(v));
-                            } else if (_mdu.second.valueCount() == 1) {
-                                dsb->setValue(mdu.values()[j]);
-                            } else {
+                        auto reg_type_m = modbus_client->get_reg_type_m();
+                        QString reg_type = "double";
+                        if (reg_type_m.count(_mdu.first) > 0) {
+                            reg_type = reg_type_m[_mdu.first];
+                        }
 
+                        if (reg_type.toLower().contains("string")) {
+                            auto le = this->ui->gb3->findChild<QLineEdit*>("le_" + _mdu.first);
+                            if (le) {
+                                // Преобразуем регистры обратно в строку
+                                QByteArray byteArray;
+                                for (int k = 0; k < _mdu.second.valueCount(); k++) {
+                                    if (j + k < mdu.values().size()) {
+                                        quint16 reg = mdu.values()[j + k];
+                                        byteArray.append((reg >> 8) & 0xFF); // Старший байт
+                                        byteArray.append(reg & 0xFF);        // Младший байт
+                                    }
+                                }
+                                // Обрезаем до нулевого байта или непечатных символов
+                                int nullPos = byteArray.indexOf('\0');
+                                if (nullPos != -1) {
+                                    byteArray.truncate(nullPos);
+                                } else {
+                                    int actualLength = byteArray.size();
+                                    for (int i = 0; i < byteArray.size(); i++) {
+                                        char c = byteArray[i];
+                                        if (c < 32 || c > 126) {
+                                            actualLength = i;
+                                            break;
+                                        }
+                                    }
+                                    byteArray.truncate(actualLength);
+                                }
+
+                                QString str = QString::fromUtf8(byteArray).trimmed();
+
+                                le->setText(str);
                             }
                             i += _mdu.second.valueCount();
                             j += _mdu.second.valueCount();
                             found = true;
+                        } else {
+                            auto dsb = this->ui->gb3->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
+                            //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
+                            if (dsb) {
+                                if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("double"))) {
+                                    double v = usa_to_double(&mdu.values()[j]);
+                                    dsb->setValue(invert_double_order(v));
+                                } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
+                                    long long v = usa_to_long(&mdu.values()[j]);
+                                    dsb->setValue(invert_long_order(v));
+                                } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
+                                    float v = usa_to_float(&mdu.values()[j]);
+                                    dsb->setValue(invert_float_order(v));
+                                } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("uint"))) {
+                                    unsigned int v = usa_to_uint(&mdu.values()[j]);
+                                    dsb->setValue(invert_uint_order(v));
+                                } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
+                                    unsigned int v = usa_to_int(&mdu.values()[j]);
+                                    dsb->setValue(invert_int_order(v));
+                                } else if (_mdu.second.valueCount() == 1) {
+                                    dsb->setValue(mdu.values()[j]);
+                                } else {
+
+                                }
+                                i += _mdu.second.valueCount();
+                                j += _mdu.second.valueCount();
+                                found = true;
+                            }
                         }
                         break;
                     }
@@ -363,51 +401,92 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                 for (const auto &_mdu : _mdum) {
                     if ((_mdu.second.registerType() == mdu.registerType()) &&
                         (_mdu.second.startAddress() == (mdu.startAddress() + j))) {
-                        auto dsb = this->ui->gb4->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
-                        //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
-                        if (dsb) {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                            disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
-#endif
-#if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
-                            disconnect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
-#endif
-                            auto reg_type_m = modbus_client->get_reg_type_m();
-                            QString reg_type = "double";
-                            if (reg_type_m.count(_mdu.first) > 0) {
-                                reg_type = reg_type_m[_mdu.first];
-                            }
 
-                            if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("double"))) {
-                                double v = usa_to_double(&mdu.values()[j]);
-                                dsb->setValue(invert_double_order(v));
-                            } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
-                                long long v = usa_to_long(&mdu.values()[j]);
-                                dsb->setValue(invert_long_order(v));
-                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
-                                float v = usa_to_float(&mdu.values()[j]);
-                                dsb->setValue(invert_float_order(v));
-                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("uint"))) {
-                                unsigned int v = usa_to_uint(&mdu.values()[j]);
-                                dsb->setValue(invert_uint_order(v));
-                            } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
-                                int v = usa_to_int(&mdu.values()[j]);
-                                dsb->setValue(invert_int_order(v));
-                            } else if (_mdu.second.valueCount() == 1) {
-                                dsb->setValue(mdu.values()[j]);
-                            } else {
+                        auto reg_type_m = modbus_client->get_reg_type_m();
+                        QString reg_type = "double";
+                        if (reg_type_m.count(_mdu.first) > 0) {
+                            reg_type = reg_type_m[_mdu.first];
+                        }
 
+                        if (reg_type.toLower().contains("string")) {
+                            auto le = this->ui->gb4->findChild<QLineEdit*>("le_" + _mdu.first);
+                            if (le) {
+                                // Преобразуем регистры обратно в строку
+                                QByteArray byteArray;
+                                for (int k = 0; k < _mdu.second.valueCount(); k++) {
+                                    if (j + k < mdu.values().size()) {
+                                        quint16 reg = mdu.values()[j + k];
+                                        byteArray.append((reg >> 8) & 0xFF); // Старший байт
+                                        byteArray.append(reg & 0xFF);        // Младший байт
+                                    }
+                                }
+                                // Обрезаем до нулевого байта или непечатных символов
+                                int nullPos = byteArray.indexOf('\0');
+                                if (nullPos != -1) {
+                                    byteArray.truncate(nullPos);
+                                } else {
+                                    int actualLength = byteArray.size();
+                                    for (int i = 0; i < byteArray.size(); i++) {
+                                        char c = byteArray[i];
+                                        if (c < 32 || c > 126) {
+                                            actualLength = i;
+                                            break;
+                                        }
+                                    }
+                                    byteArray.truncate(actualLength);
+                                }
+
+                                QString str = QString::fromUtf8(byteArray).trimmed();
+
+                                disconnect(le, &QLineEdit::textChanged, this, &MainWindow::StringRegistersChanged);
+                                le->setText(str);
+                                connect(le, &QLineEdit::textChanged, this, &MainWindow::StringRegistersChanged);
                             }
                             i += _mdu.second.valueCount();
                             j += _mdu.second.valueCount();
                             found = true;
+                        } else {
+                            auto dsb = this->ui->gb4->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
+                            //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
+                            if (dsb) {
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                                disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #endif
+    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                                disconnect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+    #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                            connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
-#endif
-#if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
-                            connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
-#endif
+                                if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("double"))) {
+                                    double v = usa_to_double(&mdu.values()[j]);
+                                    dsb->setValue(invert_double_order(v));
+                                } else if ((_mdu.second.valueCount() == 4) && (reg_type.toLower().contains("long"))) {
+                                    long long v = usa_to_long(&mdu.values()[j]);
+                                    dsb->setValue(invert_long_order(v));
+                                } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("float"))) {
+                                    float v = usa_to_float(&mdu.values()[j]);
+                                    dsb->setValue(invert_float_order(v));
+                                } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("uint"))) {
+                                    unsigned int v = usa_to_uint(&mdu.values()[j]);
+                                    dsb->setValue(invert_uint_order(v));
+                                } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
+                                    int v = usa_to_int(&mdu.values()[j]);
+                                    dsb->setValue(invert_int_order(v));
+                                } else if (_mdu.second.valueCount() == 1) {
+                                    dsb->setValue(mdu.values()[j]);
+                                } else {
+
+                                }
+                                i += _mdu.second.valueCount();
+                                j += _mdu.second.valueCount();
+                                found = true;
+
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                                connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #endif
+    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                                connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+    #endif
+                            }
                         }
                         break;
                     }
@@ -442,6 +521,16 @@ void MainWindow::HoldingRegistersChanged(double value) {
         reg_name = reg_name.remove("dsb_");
         qCDebug(logDebug()) << reg_name << value;
         this->modbus_client->setRegister(QModbusDataUnit::HoldingRegisters, reg_name, value);
+    }
+}
+
+void MainWindow::StringRegistersChanged(const QString &value) {
+    auto sender = QObject::sender();
+    if (sender) {
+        QString reg_name = sender->objectName();
+        reg_name = reg_name.remove("le_");
+        qCDebug(logDebug()) << reg_name << value;
+        this->modbus_client->setRegisterString(QModbusDataUnit::HoldingRegisters, reg_name, value);
     }
 }
 
@@ -553,32 +642,56 @@ void MainWindow::modbus_ui() {
             break;
             case QModbusDataUnit::InputRegisters:
             {
-                auto label = new QLabel(name, this);
-                auto dsb = new QDoubleSpinBox(this);
-                create_dsb(dsb, name, reg_type, mdu);
+                if (reg_type.toLower().contains("string")) {
+                    auto label = new QLabel(name, this);
+                    auto le = new QLineEdit(this);
+                    le->setObjectName(QString("le_") + name);
 
-                gl3->addWidget(label, ir_v.size(), 0);
-                gl3->addWidget(dsb, ir_v.size(), 1);
+                    gl3->addWidget(label, ir_le_v.size() + ir_v.size(), 0);
+                    gl3->addWidget(le, ir_le_v.size() + ir_v.size(), 1);
 
-                ir_v.push_back(dsb);
+                    ir_le_v.push_back(le);
+                } else {
+                    auto label = new QLabel(name, this);
+                    auto dsb = new QDoubleSpinBox(this);
+                    create_dsb(dsb, name, reg_type, mdu);
+
+                    gl3->addWidget(label, ir_le_v.size() + ir_v.size(), 0);
+                    gl3->addWidget(dsb, ir_le_v.size() + ir_v.size(), 1);
+
+                    ir_v.push_back(dsb);
+                }
             }
             break;
             case QModbusDataUnit::HoldingRegisters:
             {
-                auto label = new QLabel(name, this);
-                auto dsb = new QDoubleSpinBox(this);
-                create_dsb(dsb, name, reg_type, mdu);
+                if (reg_type.toLower().contains("string")) {
+                    auto label = new QLabel(name, this);
+                    auto le = new QLineEdit(this);
+                    le->setObjectName(QString("le_") + name);
 
-                gl4->addWidget(label, hr_v.size(), 0);
-                gl4->addWidget(dsb, hr_v.size(), 1);
+                    gl4->addWidget(label, hr_le_v.size() + hr_v.size(), 0);
+                    gl4->addWidget(le, hr_le_v.size() + hr_v.size(), 1);
 
-                hr_v.push_back(dsb);
-                #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                    connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
-                #endif
-                #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
-                    connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
-                #endif
+                    hr_le_v.push_back(le);
+
+                    connect(le, &QLineEdit::textChanged, this, &MainWindow::StringRegistersChanged);
+                } else {
+                    auto label = new QLabel(name, this);
+                    auto dsb = new QDoubleSpinBox(this);
+                    create_dsb(dsb, name, reg_type, mdu);
+
+                    gl4->addWidget(label, hr_le_v.size() + hr_v.size(), 0);
+                    gl4->addWidget(dsb, hr_le_v.size() + hr_v.size(), 1);
+
+                    hr_v.push_back(dsb);
+                    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                        connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+                    #endif
+                    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                        connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+                    #endif
+                }
             }
             break;
             default:

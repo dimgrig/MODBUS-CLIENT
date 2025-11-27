@@ -12,6 +12,7 @@
         <file>json/modbus_ekostubpro_test.json</file>
         <file>json/modbus_10_stm.json</file>
         <file>json/modbus_upkd.json</file>
+        <file>json/modbus_veelang_vl_mpt_50x.json</file>
     </qresource>
     <qresource prefix="/icons">
         <file>led_green_off.svg</file>

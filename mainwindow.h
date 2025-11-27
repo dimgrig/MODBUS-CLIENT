@@ -23,6 +23,7 @@
 #include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
@@ -81,6 +82,7 @@ private slots:
 
     void CoilsChanged(bool value);
     void HoldingRegistersChanged(double value);
+    void StringRegistersChanged(const QString &value);
 private:
     void connect_signal_slot();
     void read_config();
@@ -110,6 +112,8 @@ private:
     std::vector<QCheckBox*> coil_v;
     std::vector<QDoubleSpinBox*> ir_v;
     std::vector<QDoubleSpinBox*> hr_v;
+    std::vector<QLineEdit*> ir_le_v;
+    std::vector<QLineEdit*> hr_le_v;
 
     std::map<QString, QModbusDataUnit> _mdum;
 

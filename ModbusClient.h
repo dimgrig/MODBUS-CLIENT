@@ -40,6 +40,7 @@ public slots:
     void on_write(QModbusDataUnit::RegisterType type, int startAddress, quint16 numberOfEntries);
 
     void setRegister(QModbusDataUnit::RegisterType table, const QString &reg_name, double value);
+    void setRegisterString(QModbusDataUnit::RegisterType table, const QString &reg_name, const QString &value);
 
 //    void on_write(QString reg_name, unsigned int value);
 //    void on_write(QString reg_name, double value);

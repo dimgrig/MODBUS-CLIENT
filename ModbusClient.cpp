@@ -381,6 +381,60 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
     // }
 }
 
+void ModbusClient::setRegisterString(QModbusDataUnit::RegisterType table, const QString &reg_name, const QString &value) {
+    if (!modbusDevice)
+        return;
+
+    if (_mdum.count(reg_name) > 0) {
+        QModbusDataUnit mdu = _mdum[reg_name];
+        int size = mdu.valueCount();
+        int maxBytes = size * 2;
+
+        switch (table) {
+        case QModbusDataUnit::HoldingRegisters:
+        {
+            // Преобразуем строку в массив quint16 (каждый регистр = 2 байта)
+            QByteArray byteArray = value.toUtf8();
+
+            // Обрезаем строку, если она слишком длинная
+            if (byteArray.size() > maxBytes - 1) {
+                byteArray.resize(maxBytes - 1);
+                qCDebug(logWarning) << "String truncated to fit in registers:" << reg_name;
+            }
+
+            byteArray.append('\0');
+
+            int registerCount = (byteArray.size() + 1) / 2;
+            QVector<quint16> values(registerCount, 0);
+
+            for (int i = 0; i < byteArray.size(); i++) {
+                int registerIndex = i / 2;
+                if (i % 2 == 0) {
+                    // Старший байт
+                    values[registerIndex] = (byteArray[i] << 8) & 0xFF00;
+                } else {
+                    // Младший байт
+                    values[registerIndex] |= (byteArray[i] & 0x00FF);
+                }
+            }
+
+            // Заполняем нулями
+            while (values.size() < size) {
+                values.append(0);
+            }
+
+            mdu.setValues(values);
+            this->on_write(mdu);
+            //qCDebug(logDebug) << "setRegisterString" << reg_name << value << "as" << values;
+        }
+        break;
+        default:
+            qCDebug(logWarning) << "String write not supported for register type:" << table;
+            break;
+        }
+    }
+}
+
 void ModbusClient::read_config(){
     //qCDebug(logDebug()) << "cfg.MODBUS_IP" << cfg.MODBUS_TYPE << cfg.MODBUS_IP << cfg.MODBUS_PORT;
     this->ui->cb_connect_type->setCurrentText(cfg.MODBUS_TYPE);

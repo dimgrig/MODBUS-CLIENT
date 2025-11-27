@@ -1,14 +1,223 @@
 [
     {
-        "ObjName": "INPUT",
-        "ObjType": 30000,
+        "ObjName": "COIL",
+        "ObjType": 0,
         "PageName": "",
         "PageType": 0,
         "Index": 1,
-        "Address": 30000,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "current_pressure"
+        "Address": 0,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil1"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 2,
+        "Address": 1,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil2"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 3,
+        "Address": 2,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil3"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 4,
+        "Address": 3,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil4"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 5,
+        "Address": 4,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil5"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 6,
+        "Address": 5,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil6"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 7,
+        "Address": 6,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil7"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 8,
+        "Address": 7,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil8"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 9,
+        "Address": 8,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil9"
+    },
+    {
+        "ObjName": "COIL",
+        "ObjType": 0,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 10,
+        "Address": 9,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "coil10"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 1,
+        "Address": 0,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input1"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 2,
+        "Address": 1,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input2"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 3,
+        "Address": 2,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input3"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 4,
+        "Address": 3,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input4"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 5,
+        "Address": 4,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input5"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 6,
+        "Address": 5,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input6"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 7,
+        "Address": 6,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input7"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 8,
+        "Address": 7,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input8"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 9,
+        "Address": 8,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input9"
+    },
+    {
+        "ObjName": "DISCRETEINPUT",
+        "ObjType": 10000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 10,
+        "Address": 9,
+        "RegisterType": "System.Bool",
+        "DataLength": 1,
+        "RegisterName": "input10"
     },
     {
         "ObjName": "INPUT",
@@ -16,21 +225,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 1,
-        "Address": 30002,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "protection_pressure"
-    },
-    {
-        "ObjName": "INPUT",
-        "ObjType": 30000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 1,
-        "Address": 30004,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "leak_speed"
+        "Address": 0,
+        "RegisterType": "System.UInt16",
+        "DataLength": 1,
+        "RegisterName": "ir1"
     },
     {
         "ObjName": "INPUT",
@@ -38,21 +236,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 2,
-        "Address": 30006,
+        "Address": 1,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
-        "RegisterName": "system_status"
-    },
-    {
-        "ObjName": "INPUT",
-        "ObjType": 30000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 2,
-        "Address": 30007,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "mode_done"
+        "RegisterName": "ir2"
     },
     {
         "ObjName": "INPUT",
@@ -60,10 +247,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 3,
-        "Address": 30008,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "error_code"
+        "Address": 2,
+        "RegisterType": "System.UInt32",
+        "DataLength": 2,
+        "RegisterName": "ir3"
     },
     {
         "ObjName": "INPUT",
@@ -71,10 +258,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 4,
-        "Address": 30009,
+        "Address": 4,
         "RegisterType": "System.UInt32",
         "DataLength": 2,
-        "RegisterName": "operation_time"
+        "RegisterName": "ir4"
     },
     {
         "ObjName": "INPUT",
@@ -82,10 +269,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 5,
-        "Address": 30011,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "raw_adc_value"
+        "Address": 6,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "ir5"
     },
     {
         "ObjName": "INPUT",
@@ -93,10 +280,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 6,
-        "Address": 30012,
+        "Address": 8,
         "RegisterType": "System.Float",
         "DataLength": 2,
-        "RegisterName": "current_temperature"
+        "RegisterName": "ir6"
     },
     {
         "ObjName": "INPUT",
@@ -104,10 +291,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 7,
-        "Address": 30014,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "firmware_major"
+        "Address": 10,
+        "RegisterType": "System.Double",
+        "DataLength": 4,
+        "RegisterName": "ir7"
     },
     {
         "ObjName": "INPUT",
@@ -115,10 +302,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 8,
-        "Address": 30015,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "firmware_minor"
+        "Address": 14,
+        "RegisterType": "System.Double",
+        "DataLength": 4,
+        "RegisterName": "ir8"
     },
     {
         "ObjName": "INPUT",
@@ -126,10 +313,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 9,
-        "Address": 30016,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "firmware_patch"
+        "Address": 18,
+        "RegisterType": "System.Long",
+        "DataLength": 4,
+        "RegisterName": "ir9"
     },
     {
         "ObjName": "INPUT",
@@ -137,24 +324,32 @@
         "PageName": "",
         "PageType": 0,
         "Index": 10,
-        "Address": 30017,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "hardware_version"
+        "Address": 22,
+        "RegisterType": "System.Long",
+        "DataLength": 4,
+        "RegisterName": "ir10"
     },
-
-
-
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 11,
+        "Address": 26,
+        "RegisterType": "System.String",
+        "DataLength": 20,
+        "RegisterName": "InputString"
+    },
     {
         "ObjName": "HOLDING",
         "ObjType": 40000,
         "PageName": "",
         "PageType": 0,
         "Index": 1,
-        "Address": 40000,
+        "Address": 0,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
-        "RegisterName": "control_flags"
+        "RegisterName": "hr1"
     },
     {
         "ObjName": "HOLDING",
@@ -162,10 +357,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 2,
-        "Address": 40001,
+        "Address": 1,
         "RegisterType": "System.UInt16",
         "DataLength": 1,
-        "RegisterName": "operation_mode"
+        "RegisterName": "hr2"
     },
     {
         "ObjName": "HOLDING",
@@ -173,10 +368,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 3,
-        "Address": 40002,
-        "RegisterType": "System.Float",
+        "Address": 2,
+        "RegisterType": "System.UInt32",
         "DataLength": 2,
-        "RegisterName": "static_pressure_target"
+        "RegisterName": "hr3"
     },
     {
         "ObjName": "HOLDING",
@@ -184,22 +379,21 @@
         "PageName": "",
         "PageType": 0,
         "Index": 4,
-        "Address": 40004,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "static_pump_power"
+        "Address": 4,
+        "RegisterType": "System.UInt32",
+        "DataLength": 2,
+        "RegisterName": "hr4"
     },
-
     {
         "ObjName": "HOLDING",
         "ObjType": 40000,
         "PageName": "",
         "PageType": 0,
         "Index": 5,
-        "Address": 40005,
+        "Address": 6,
         "RegisterType": "System.Float",
         "DataLength": 2,
-        "RegisterName": "systolic_pressure"
+        "RegisterName": "hr5"
     },
     {
         "ObjName": "HOLDING",
@@ -207,10 +401,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 6,
-        "Address": 40007,
+        "Address": 8,
         "RegisterType": "System.Float",
         "DataLength": 2,
-        "RegisterName": "diastolic_pressure"
+        "RegisterName": "hr6"
     },
     {
         "ObjName": "HOLDING",
@@ -218,10 +412,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 7,
-        "Address": 40009,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "pulse_rate"
+        "Address": 10,
+        "RegisterType": "System.Double",
+        "DataLength": 4,
+        "RegisterName": "hr7"
     },
     {
         "ObjName": "HOLDING",
@@ -229,10 +423,10 @@
         "PageName": "",
         "PageType": 0,
         "Index": 8,
-        "Address": 40010,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "piston_volume"
+        "Address": 14,
+        "RegisterType": "System.Double",
+        "DataLength": 4,
+        "RegisterName": "hr8"
     },
     {
         "ObjName": "HOLDING",
@@ -240,203 +434,31 @@
         "PageName": "",
         "PageType": 0,
         "Index": 9,
-        "Address": 40012,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "pulse_waveform"
+        "Address": 18,
+        "RegisterType": "System.Long",
+        "DataLength": 4,
+        "RegisterName": "hr9"
     },
     {
         "ObjName": "HOLDING",
         "ObjType": 40000,
         "PageName": "",
         "PageType": 0,
-        "Index": 9,
-        "Address": 40013,
-        "RegisterType": "System.UInt32",
-        "DataLength": 2,
-        "RegisterName": "pressure_stable_threshold"
+        "Index": 10,
+        "Address": 22,
+        "RegisterType": "System.Long",
+        "DataLength": 4,
+        "RegisterName": "hr10"
     },
     {
         "ObjName": "HOLDING",
         "ObjType": 40000,
         "PageName": "",
         "PageType": 0,
-        "Index": 9,
-        "Address": 40015,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "pressure_delta_threshold"
-    },
-
-
-
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 40,
-        "Address": 40029,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "pressure_calib_a0"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 41,
-        "Address": 40031,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "pressure_calib_a1"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 42,
-        "Address": 40033,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "pressure_calib_a2"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 43,
-        "Address": 40035,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "pressure_calib_a3"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 44,
-        "Address": 40037,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "pressure_calib_a4"
-    },
-
-
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 50,
-        "Address": 40039,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "max_safe_pressure"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 51,
-        "Address": 40041,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "min_safe_pressure"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 52,
-        "Address": 40043,
-        "RegisterType": "System.Float",
-        "DataLength": 2,
-        "RegisterName": "negative_pressure_threshold"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 53,
-        "Address": 40045,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "max_adc_value"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 54,
-        "Address": 40046,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "min_adc_value"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 55,
-        "Address": 40047,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "no_pressure_timeout"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 56,
-        "Address": 40048,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "safety_timeout"
-    }
-
-    ,
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 57,
-        "Address": 40049,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "stepper_test"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 58,
-        "Address": 40050,
-        "RegisterType": "System.Int32",
-        "DataLength": 2,
-        "RegisterName": "stepper_steps"
-    },
-    {
-        "ObjName": "HOLDING",
-        "ObjType": 40000,
-        "PageName": "",
-        "PageType": 0,
-        "Index": 59,
-        "Address": 40052,
-        "RegisterType": "System.UInt16",
-        "DataLength": 1,
-        "RegisterName": "stepper_speed"
+        "Index": 11,
+        "Address": 26,
+        "RegisterType": "System.String",
+        "DataLength": 20,
+        "RegisterName": "HoldingString"
     }
 ]
