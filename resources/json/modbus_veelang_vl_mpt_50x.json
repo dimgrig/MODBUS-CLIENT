@@ -1,0 +1,35 @@
+[
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 1,
+        "Address": 4,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "Temo"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 2,
+        "Address": 12,
+        "RegisterType": "System.String",
+        "DataLength": 20,
+        "RegisterName": "Name"
+    },
+    {
+        "ObjName": "INPUT",
+        "ObjType": 30000,
+        "PageName": "",
+        "PageType": 0,
+        "Index": 9,
+        "Address": 280,
+        "RegisterType": "System.Float",
+        "DataLength": 2,
+        "RegisterName": "Param.1"
+    }
+]
