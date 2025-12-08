@@ -47,6 +47,7 @@ ModbusClient::~ModbusClient() {
     if (modbusDevice)
         modbusDevice->disconnectDevice();
     delete modbusDevice;
+    delete ui;
 }
 
 int ModbusClient::get_poll_timer() const {
@@ -365,6 +366,14 @@ void ModbusClient::setRegister(QModbusDataUnit::RegisterType table, const QStrin
                 } else if ((mdu.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
                     QVector<quint16> values(2, 0);
                     int_to_usa(invert_int_order(value), &values[0]);
+                    mdu.setValues(values);
+                    this->on_write(mdu);
+                } else if ((mdu.valueCount() == 1) && (reg_type.toLower().contains("ushort"))) {
+                    QVector<quint16> values(1, value);
+                    mdu.setValues(values);
+                    this->on_write(mdu);
+                } else if ((mdu.valueCount() == 1) && (reg_type.toLower().contains("short"))) {
+                    QVector<quint16> values(1, value);
                     mdu.setValues(values);
                     this->on_write(mdu);
                 } else if (mdu.valueCount() == 1) {

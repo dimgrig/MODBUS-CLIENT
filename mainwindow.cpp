@@ -377,6 +377,10 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
                                     unsigned int v = usa_to_int(&mdu.values()[j]);
                                     dsb->setValue(invert_int_order(v));
+                                } else if ((_mdu.second.valueCount() == 1) && (reg_type.toLower().contains("ushort"))) {
+                                    dsb->setValue(mdu.values()[j]);
+                                } else if ((_mdu.second.valueCount() == 1) && (reg_type.toLower().contains("short"))) {
+                                    dsb->setValue((short)mdu.values()[j]);
                                 } else if (_mdu.second.valueCount() == 1) {
                                     dsb->setValue(mdu.values()[j]);
                                 } else {
@@ -477,6 +481,10 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_type.toLower().contains("int"))) {
                                     int v = usa_to_int(&mdu.values()[j]);
                                     dsb->setValue(invert_int_order(v));
+                                } else if ((_mdu.second.valueCount() == 1) && (reg_type.toLower().contains("ushort"))) {
+                                    dsb->setValue(mdu.values()[j]);
+                                } else if ((_mdu.second.valueCount() == 1) && (reg_type.toLower().contains("short"))) {
+                                    dsb->setValue((short)mdu.values()[j]);
                                 } else if (_mdu.second.valueCount() == 1) {
                                     dsb->setValue(mdu.values()[j]);
                                 } else {
@@ -485,6 +493,7 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                                 i += _mdu.second.valueCount();
                                 j += _mdu.second.valueCount();
                                 found = true;
+
 
     #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                                 connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
@@ -568,6 +577,18 @@ void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_typ
         dsb->setSingleStep(0.01);
         dsb->setMaximum(DBL_MAX);
         dsb->setMinimum(-DBL_MAX);
+    } else if (reg_type.toLower().contains("ushort")) {
+        //ushort
+        dsb->setDecimals(0);
+        dsb->setSingleStep(1);
+        dsb->setMaximum((double)USHRT_MAX);
+        dsb->setMinimum(0);
+    } else if (reg_type.toLower().contains("short")) {
+        //short
+        dsb->setDecimals(0);
+        dsb->setSingleStep(1);
+        dsb->setMaximum((double)SHRT_MAX);
+        dsb->setMinimum((double)-SHRT_MAX);
     } else if (reg_type.toLower().contains("uint")) {
         //uint
         dsb->setDecimals(0);
