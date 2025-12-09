@@ -67,6 +67,8 @@ ModbusClient::~ModbusClient() {
 void ModbusClient::set_modbus_settings(ModbusSettings modbus_settings) {
     _modbus_settings = modbus_settings;
 
+    this->on_connect_type(static_cast<int>(ModbusConnection_from_text(modbus_settings.MODBUS_TYPE.toStdString().c_str())));
+
     if (_connection_type == ModbusSerial) {
         _portCheckTimer->start(1000); // Проверка каждую секунду
     }
@@ -101,12 +103,9 @@ void ModbusClient::on_connect_type(int index) {
             qCDebug(logDebug) << (tr("Could not create Modbus client."));
         }
     } else {
-        connect(modbusDevice, &QModbusClient::stateChanged,
-                this, &ModbusClient::onModbusStateChanged);
-        connect(modbusDevice, &QModbusClient::stateChanged,
-                this, &ModbusClient::on_state_changed);
-        connect(modbusDevice, &QModbusClient::errorOccurred,
-                this, &ModbusClient::onModbusErrorOccurred);
+        connect(modbusDevice, &QModbusClient::stateChanged, this, &ModbusClient::onModbusStateChanged);
+        connect(modbusDevice, &QModbusClient::stateChanged, this, &ModbusClient::on_state_changed);
+        connect(modbusDevice, &QModbusClient::errorOccurred, this, &ModbusClient::onModbusErrorOccurred);
     }
 }
 
