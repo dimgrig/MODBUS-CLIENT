@@ -84,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->read_config();
 
     //this->ui->gb_system_settings->layout()->addWidget(this->modbus_client);
-    this->ui->modbus_settings_layout->addWidget(this->modbus_client, 3, 0, 2, 0);
+    this->ui->modbus_settings_layout->addWidget(this->modbus_client_settings, 3, 0, 2, 0);
 
     if (cfg.PROXY) {
         QNetworkProxy proxy;
@@ -97,7 +97,9 @@ MainWindow::MainWindow(QWidget *parent)
         QNetworkProxy::setApplicationProxy(proxy);
     }
 
-    modbus_client->on_connect();
+
+    modbus_client->set_modbus_settings(this->modbus_client_settings->getSettingsFromUi());
+    modbus_client->connectToHost();
 
     this->modbus_ui();
 
@@ -165,14 +167,22 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event) {
 
 void MainWindow::connect_signal_slot() {
     connect(this->timer, &QTimer::timeout, this, &MainWindow::on_timer);
-    this->timer->start(this->modbus_client->get_poll_timer());
+    this->timer->start(this->modbus_client_settings->get_poll_timer());
 
     connect(this->modbus_client, &ModbusClient::read_ready, this, &MainWindow::modbus_read);
 
-    connect(this->modbus_client, &ModbusClient::poll_timer_changed, [this](int value){
+    connect(this->modbus_client_settings, &ModbusClientSettings::settings_changed, [this](){
+        modbus_client->disconnectFromHost();
+        modbus_client->set_modbus_settings(this->modbus_client_settings->getSettingsFromUi());
+        modbus_client->connectToHost();
+    });
+
+    connect(this->modbus_client_settings, &ModbusClientSettings::poll_timer_changed, [this](int value){
         this->timer->stop();
         this->timer->start(value);
     });
+
+    connect(this->modbus_client, &ModbusClient::on_state_changed, this->modbus_client_settings, &ModbusClientSettings::onModbusStateChanged);
 }
 
 void MainWindow::read_config(){
@@ -180,7 +190,7 @@ void MainWindow::read_config(){
 
     //this->ui->sb_poll_timer->setValue(cfg.MODBUS_POLL_TIMER);
 
-    this->modbus_client->read_config();
+    this->modbus_client_settings->read_config();
 }
 
 void MainWindow::write_config(){
@@ -195,7 +205,7 @@ void MainWindow::write_config(){
     //config.setValue("MODBUS_POLL_TIMER", cfg.MODBUS_POLL_TIMER);
     config.endGroup();
 
-    this->modbus_client->write_config();
+    this->modbus_client_settings->write_config();
 }
 
 void MainWindow::menu_bar() {

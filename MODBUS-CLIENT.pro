@@ -30,6 +30,7 @@ SOURCES += \
     MessageBox.cpp \
     ModbusBase.cpp \
     ModbusClient.cpp \
+    ModbusClientSettings.cpp \
     Profiler.cpp \
     Sleeper.cpp \
     TestRunner.cpp \
@@ -48,6 +49,7 @@ HEADERS += \
     MessageBox.h \
     ModbusBase.h \
     ModbusClient.h \
+    ModbusClientSettings.h \
     Profiler.h \
     Sleeper.h \
     TestRunner.h \
