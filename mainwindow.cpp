@@ -86,16 +86,16 @@ MainWindow::MainWindow(QWidget *parent)
     //this->ui->gb_system_settings->layout()->addWidget(this->modbus_client);
     this->ui->modbus_settings_layout->addWidget(this->modbus_client_settings, 3, 0, 2, 0);
 
-    if (cfg.PROXY) {
-        QNetworkProxy proxy;
-        proxy.setType(QNetworkProxy::DefaultProxy);
-        proxy.setHostName(cfg.PROXY_HOST); //"192.168.7.1"
-        proxy.setPort(cfg.PROXY_PORT); //3128
-        //proxy.setUser("username");
-        //proxy.setPassword("password");
+    // if (cfg.PROXY) {
+    //     QNetworkProxy proxy;
+    //     proxy.setType(QNetworkProxy::DefaultProxy);
+    //     proxy.setHostName(cfg.PROXY_HOST); //"192.168.7.1"
+    //     proxy.setPort(cfg.PROXY_PORT); //3128
+    //     //proxy.setUser("username");
+    //     //proxy.setPassword("password");
 
-        QNetworkProxy::setApplicationProxy(proxy);
-    }
+    //     QNetworkProxy::setApplicationProxy(proxy);
+    // }
 
 
     modbus_client->set_modbus_settings(this->modbus_client_settings->getSettingsFromUi());
