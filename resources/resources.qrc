@@ -13,6 +13,12 @@
         <file>json/modbus_10_stm.json</file>
         <file>json/modbus_upkd.json</file>
         <file>json/modbus_veelang_vl_mpt_50x.json</file>
+        <file>json/modbus_XDB1208-1.json</file>
+        <file>json/modbus_XDB1212-2.json</file>
+        <file>json/modbus_XDB1213.json</file>
+        <file>json/modbus_XDB1217-3A.json</file>
+        <file>json/modbus_XDB1217-7A.json</file>
+        <file>json/modbus_XDB1218-5.json</file>
     </qresource>
     <qresource prefix="/icons">
         <file>led_green_off.svg</file>
