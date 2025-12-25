@@ -376,22 +376,22 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                             //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                             if (dsb) {
                                 if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("double"))) {
-                                    double v = usa_to_double(&mdu.values()[j]);
+                                    double v = usa_to_double(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("ulong"))) {
-                                    unsigned long long v = usa_to_ulong(&mdu.values()[j]);
+                                    unsigned long long v = usa_to_ulong(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("long"))) {
-                                    long long v = usa_to_long(&mdu.values()[j]);
+                                    long long v = usa_to_long(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("float"))) {
-                                    float v = usa_to_float(&mdu.values()[j]);
+                                    float v = usa_to_float(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("uint"))) {
-                                    unsigned int v = usa_to_uint(&mdu.values()[j]);
+                                    unsigned int v = usa_to_uint(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("int"))) {
-                                    unsigned int v = usa_to_int(&mdu.values()[j]);
+                                    unsigned int v = usa_to_int(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("ushort"))) {
                                     dsb->setValue(mdu.values()[j]);
@@ -480,22 +480,22 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
     #endif
 
                                 if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("double"))) {
-                                    double v = usa_to_double(&mdu.values()[j]);
+                                    double v = usa_to_double(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("ulong"))) {
-                                    unsigned long long v = usa_to_ulong(&mdu.values()[j]);
+                                    unsigned long long v = usa_to_ulong(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("long"))) {
-                                    long long v = usa_to_long(&mdu.values()[j]);
+                                    long long v = usa_to_long(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("float"))) {
-                                    float v = usa_to_float(&mdu.values()[j]);
+                                    float v = usa_to_float(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("uint"))) {
-                                    unsigned int v = usa_to_uint(&mdu.values()[j]);
+                                    unsigned int v = usa_to_uint(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("int"))) {
-                                    int v = usa_to_int(&mdu.values()[j]);
+                                    int v = usa_to_int(&mdu.values()[j], this->modbus_client->modbus_format());
                                     dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("ushort"))) {
                                     dsb->setValue(mdu.values()[j]);
