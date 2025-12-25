@@ -41,6 +41,7 @@
 #include "Sleeper.h"
 #include "TestRunner.h"
 
+#include <QGridLayout>
 #include <QTranslator>
 #include <QLibraryInfo>
 
@@ -95,6 +96,7 @@ private:
     void _saveGeometry();
     void restore_geometry();
     void modbus_ui();
+    void clear_modbus_ui();
 
     void test();
 
@@ -108,6 +110,11 @@ private:
     ModbusSettingsUI *modbus_settings_ui = new ModbusSettingsUI(this);
 
     QTranslator qtLanguageTranslator;
+
+    QGridLayout *gl1 = nullptr;
+    QGridLayout *gl2 = nullptr;
+    QGridLayout *gl3 = nullptr;
+    QGridLayout *gl4 = nullptr;
 
     std::vector<QCheckBox*> di_v;
     std::vector<QCheckBox*> coil_v;
