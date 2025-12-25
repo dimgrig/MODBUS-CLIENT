@@ -59,7 +59,7 @@
         "RegisterType": "HoldingRegister",
         "Address": 12288,
         "RegisterDataType": "UShort",
-        "DataLength": 2,
+        "DataLength": 1,
         "RegisterName": "ID"
     }
 ]
