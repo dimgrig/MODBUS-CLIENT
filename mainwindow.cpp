@@ -175,9 +175,14 @@ void MainWindow::connect_signal_slot() {
     connect(this->modbus_client, &ModbusClient::read_ready, this, &MainWindow::modbus_read);
 
     connect(this->modbus_settings_ui, &ModbusSettingsUI::settings_changed, [this](){
-        modbus_client->disconnectFromHost();
+        bool connected = modbus_client->isConnected();
+        if (connected) {
+            modbus_client->disconnectFromHost();
+        }
         modbus_client->set_modbus_settings(this->modbus_settings_ui->getSettingsFromUi());
-        modbus_client->connectToHost();
+        if (connected) {
+            modbus_client->connectToHost();
+        }
     });
 
     connect(this->modbus_settings_ui, &ModbusSettingsUI::poll_timer_changed, [this](int value){
@@ -372,22 +377,22 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                             if (dsb) {
                                 if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("double"))) {
                                     double v = usa_to_double(&mdu.values()[j]);
-                                    dsb->setValue(invert_double_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("ulong"))) {
                                     unsigned long long v = usa_to_ulong(&mdu.values()[j]);
-                                    dsb->setValue(invert_ulong_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("long"))) {
                                     long long v = usa_to_long(&mdu.values()[j]);
-                                    dsb->setValue(invert_long_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("float"))) {
                                     float v = usa_to_float(&mdu.values()[j]);
-                                    dsb->setValue(invert_float_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("uint"))) {
                                     unsigned int v = usa_to_uint(&mdu.values()[j]);
-                                    dsb->setValue(invert_uint_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("int"))) {
                                     unsigned int v = usa_to_int(&mdu.values()[j]);
-                                    dsb->setValue(invert_int_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("ushort"))) {
                                     dsb->setValue(mdu.values()[j]);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("short"))) {
@@ -476,22 +481,22 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
 
                                 if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("double"))) {
                                     double v = usa_to_double(&mdu.values()[j]);
-                                    dsb->setValue(invert_double_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("ulong"))) {
                                     unsigned long long v = usa_to_ulong(&mdu.values()[j]);
-                                    dsb->setValue(invert_ulong_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("long"))) {
                                     long long v = usa_to_long(&mdu.values()[j]);
-                                    dsb->setValue(invert_long_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("float"))) {
                                     float v = usa_to_float(&mdu.values()[j]);
-                                    dsb->setValue(invert_float_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("uint"))) {
                                     unsigned int v = usa_to_uint(&mdu.values()[j]);
-                                    dsb->setValue(invert_uint_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("int"))) {
                                     int v = usa_to_int(&mdu.values()[j]);
-                                    dsb->setValue(invert_int_order(v));
+                                    dsb->setValue(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("ushort"))) {
                                     dsb->setValue(mdu.values()[j]);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("short"))) {
