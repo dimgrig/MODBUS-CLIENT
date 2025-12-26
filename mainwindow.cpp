@@ -18,6 +18,8 @@ const int StatusTimeout = AQP::MSecPerSecond * 10;
 
 #define SINGLESHOT_TIMER    100
 
+#define ENABLE_CONVERSION
+
 void create_gb(QGridLayout *gl, QGroupBox *gb) {
     QGroupBox* gbi = new QGroupBox;
     //QGridLayout *li = new QGridLayout; //gl
@@ -416,33 +418,47 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                             auto dsb = this->ui->gb3->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                             //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                             if (dsb) {
+                                double value = 0.0;
                                 if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("double"))) {
-                                    double v = usa_to_double(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = usa_to_double(&mdu.values()[j], this->modbus_client->modbus_format());
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("ulong"))) {
                                     unsigned long long v = usa_to_ulong(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("long"))) {
                                     long long v = usa_to_long(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("float"))) {
                                     float v = usa_to_float(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("uint"))) {
                                     unsigned int v = usa_to_uint(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("int"))) {
                                     unsigned int v = usa_to_int(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("ushort"))) {
-                                    dsb->setValue(mdu.values()[j]);
+                                    unsigned short v = mdu.values()[j];
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("short"))) {
-                                    dsb->setValue((short)mdu.values()[j]);
+                                    short v = (short)(mdu.values()[j]);
+                                    value = double(v);
                                 } else if (_mdu.second.valueCount() == 1) {
-                                    dsb->setValue(mdu.values()[j]);
+                                    unsigned short v = mdu.values()[j];
+                                    value = double(v);
                                 } else {
 
                                 }
+
+#ifdef ENABLE_CONVERSION
+                                if (_mdu.first.contains("* 0.1")) {
+                                    value *= 0.1;
+                                } else if (_mdu.first.contains("* 0.01")) {
+                                    value *= 0.01;
+                                }
+#endif
+
+                                dsb->setValue(value);
+
                                 i += _mdu.second.valueCount();
                                 j += _mdu.second.valueCount();
                                 found = true;
@@ -520,33 +536,48 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                                 disconnect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
     #endif
 
+                                double value = 0;
+
                                 if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("double"))) {
-                                    double v = usa_to_double(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = usa_to_double(&mdu.values()[j], this->modbus_client->modbus_format());
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("ulong"))) {
                                     unsigned long long v = usa_to_ulong(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 4) && (reg_data_type.toLower().contains("long"))) {
                                     long long v = usa_to_long(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("float"))) {
                                     float v = usa_to_float(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("uint"))) {
                                     unsigned int v = usa_to_uint(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 2) && (reg_data_type.toLower().contains("int"))) {
                                     int v = usa_to_int(&mdu.values()[j], this->modbus_client->modbus_format());
-                                    dsb->setValue(v);
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("ushort"))) {
-                                    dsb->setValue(mdu.values()[j]);
+                                    unsigned short v = mdu.values()[j];
+                                    value = double(v);
                                 } else if ((_mdu.second.valueCount() == 1) && (reg_data_type.toLower().contains("short"))) {
-                                    dsb->setValue((short)mdu.values()[j]);
+                                    short v = (short)mdu.values()[j];
+                                    value = double(v);
                                 } else if (_mdu.second.valueCount() == 1) {
-                                    dsb->setValue(mdu.values()[j]);
+                                    unsigned short v = mdu.values()[j];
+                                    value = double(v);
                                 } else {
 
                                 }
+
+#ifdef ENABLE_CONVERSION
+                                if (_mdu.first.contains("* 0.1")) {
+                                    value *= 0.1;
+                                } else if (_mdu.first.contains("* 0.01")) {
+                                    value *= 0.01;
+                                }
+#endif
+
+                                dsb->setValue(value);
+
                                 i += _mdu.second.valueCount();
                                 j += _mdu.second.valueCount();
                                 found = true;
@@ -576,6 +607,17 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
     }
 }
 
+double conversion(QString reg_name, double value) {
+#ifdef ENABLE_CONVERSION
+    if (reg_name.contains("* 0.1")) {
+        value /= 0.1;
+    } else if (reg_name.contains("* 0.01")) {
+        value /= 0.01;
+    }
+#endif
+    return value;
+}
+
 void MainWindow::CoilsChanged(bool value) {
     auto sender = QObject::sender();
     if (sender) {
@@ -591,6 +633,7 @@ void MainWindow::HoldingRegistersChanged(double value) {
     if (sender) {
         QString reg_name = sender->objectName();
         reg_name = reg_name.remove("dsb_");
+        value = conversion(reg_name, value);
         qCDebug(logDebug()) << reg_name << value;
         this->modbus_client->setRegister(QModbusDataUnit::HoldingRegisters, reg_name, value);
     }
@@ -610,6 +653,17 @@ void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_typ
     Q_UNUSED(mdu);
     dsb->setObjectName(QString("dsb_") + name);
     dsb->setMinimumSize({50, 20});
+
+#ifdef ENABLE_CONVERSION
+    if (name.contains("* 0.01") || name.contains("* 0.1")) {
+        dsb->setDecimals(2);
+        dsb->setSingleStep(0.01);
+        dsb->setMaximum(DBL_MAX);
+        dsb->setMinimum(-DBL_MAX);
+        return;
+    }
+#endif
+
     if (reg_type.toLower().contains("float") || reg_type.toLower().contains("double")) {
         //float or double
         dsb->setDecimals(2);

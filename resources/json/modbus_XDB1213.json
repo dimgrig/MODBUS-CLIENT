@@ -4,28 +4,28 @@
         "Address": 0,
         "RegisterDataType": "Float",
         "DataLength": 2,
-        "RegisterName": "Значение"
+        "RegisterName": "Measuring"
     },
     {
         "RegisterType": "InputRegister",
         "Address": 2,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Значение current"
+        "RegisterName": "Current * 0.01"
     },
     {
         "RegisterType": "InputRegister",
         "Address": 3,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Temperature"
+        "RegisterName": "Temperature * 0.1"
     },
     {
         "RegisterType": "InputRegister",
         "Address": 4,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Temperature current"
+        "RegisterName": "Temperature current * 0.01"
     },
     {
         "RegisterType": "InputRegister",
@@ -54,42 +54,42 @@
         "Address": 0,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "EC 20.00mA"
+        "RegisterName": "EC 20.00mA * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 1,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "EC 4.00mA"
+        "RegisterName": "EC 4.00mA * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 2,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "RES 20.00mA"
+        "RegisterName": "RES 20.00mA * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 3,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "RES 4.00mA"
+        "RegisterName": "RES 4.00mA * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 4,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "SAL 20.00mA"
+        "RegisterName": "SAL 20.00mA * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 5,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "SAL 4.00mA"
+        "RegisterName": "SAL 4.00mA * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -124,14 +124,14 @@
         "Address": 10,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Temp 20.00mA"
+        "RegisterName": "Temp 20.00mA * 0.1"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 11,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Temp 4.00mA"
+        "RegisterName": "Temp 4.00mA * 0.1"
     },
 
     {
@@ -139,14 +139,14 @@
         "Address": 12,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Current 1 offset"
+        "RegisterName": "Current 1 offset * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 13,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Current 2 offset"
+        "RegisterName": "Current 2 offset * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -167,14 +167,14 @@
         "Address": 16,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Current 1 fixed current"
+        "RegisterName": "Current 1 fixed current * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 17,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Current 2 fixed current"
+        "RegisterName": "Current 2 fixed current * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -196,42 +196,42 @@
         "Address": 20,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 1 EC close S.P."
+        "RegisterName": "Relay 1 EC close S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 21,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 1 EC open S.P."
+        "RegisterName": "Relay 1 EC open S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 22,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 1 RES close S.P."
+        "RegisterName": "Relay 1 RES close S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 23,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 1 RES open S.P."
+        "RegisterName": "Relay 1 RES open S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 24,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 1 SAL close S.P."
+        "RegisterName": "Relay 1 SAL close S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 25,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 1 SAL open S.P."
+        "RegisterName": "Relay 1 SAL open S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -273,42 +273,42 @@
         "Address": 31,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 2 EC close S.P."
+        "RegisterName": "Relay 2 EC close S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 32,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 2 EC open S.P."
+        "RegisterName": "Relay 2 EC open S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 33,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 2 RES close S.P."
+        "RegisterName": "Relay 2 RES close S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 34,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 2 RES open S.P."
+        "RegisterName": "Relay 2 RES open S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 35,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 2 SAL close S.P."
+        "RegisterName": "Relay 2 SAL close S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 36,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 2 SAL open S.P."
+        "RegisterName": "Relay 2 SAL open S.P. * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -350,7 +350,7 @@
         "Address": 42,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Relay 3 period time"
+        "RegisterName": "Relay 3 period time * 0.1"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -386,21 +386,21 @@
         "Address": 47,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "EC offset"
+        "RegisterName": "EC offset * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 48,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "RES offset"
+        "RegisterName": "RES offset * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 49,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "SAL offset"
+        "RegisterName": "SAL offset * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -414,7 +414,7 @@
         "Address": 51,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Temp. offset"
+        "RegisterName": "Temp. offset * 0.1"
     },
     {
         "RegisterType": "HoldingRegister",
@@ -435,14 +435,14 @@
         "Address": 54,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Temp. compensation"
+        "RegisterName": "Temp. coefficient * 0.01"
     },
     {
         "RegisterType": "HoldingRegister",
         "Address": 55,
         "RegisterDataType": "UShort",
         "DataLength": 1,
-        "RegisterName": "Reference temp."
+        "RegisterName": "Reference temp. * 0.1"
     },
     {
         "RegisterType": "HoldingRegister",
