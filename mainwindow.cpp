@@ -529,12 +529,15 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                             auto dsb = this->ui->gb4->findChild<QDoubleSpinBox*>("dsb_" + _mdu.first);
                             //qCDebug(logDebug()) << _mdu.first << mdu.values()[j];
                             if (dsb) {
-    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+                                disconnect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+#else
+    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                                disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #else
                                 disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
     #endif
-    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
-                                disconnect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
-    #endif
+#endif
 
                                 double value = 0;
 
@@ -582,13 +585,15 @@ void MainWindow::modbus_read(QModbusDataUnit mdu) {
                                 j += _mdu.second.valueCount();
                                 found = true;
 
-
-    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+                                connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+#else
+    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                                connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #else
                                 connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
     #endif
-    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
-                                connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
-    #endif
+#endif
                             }
                         }
                         break;
@@ -799,12 +804,15 @@ void MainWindow::modbus_ui() {
                     gl4->addWidget(dsb, hr_le_v.size() + hr_v.size(), 1);
 
                     hr_v.push_back(dsb);
-                    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                        connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
-                    #endif
-                    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
-                        connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
-                    #endif
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+                    connect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
+#else
+    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                    connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #else
+                    connect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #endif
+#endif
                 }
             }
             break;
@@ -847,12 +855,14 @@ void MainWindow::clear_modbus_ui() {
 
     for (auto &dsb : hr_v) {
         if (dsb) {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-                       this, &MainWindow::HoldingRegistersChanged);
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+                    disconnect(dsb, &QDoubleSpinBox::valueChanged, this, &MainWindow::HoldingRegistersChanged);
 #else
-            disconnect(dsb, &QDoubleSpinBox::valueChanged,
-                       this, &MainWindow::HoldingRegistersChanged);
+    #if QT_VERSION > QT_VERSION_CHECK(5, 15, 8)
+                    disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #else
+                    disconnect(dsb, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::HoldingRegistersChanged);
+    #endif
 #endif
         }
     }
