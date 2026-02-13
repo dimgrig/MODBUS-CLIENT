@@ -19,6 +19,7 @@
         <file>json/modbus_XDB1217-3A.json</file>
         <file>json/modbus_XDB1217-7A.json</file>
         <file>json/modbus_XDB1218-5.json</file>
+        <file>json/modbus_AME3030.json</file>
     </qresource>
     <qresource prefix="/icons">
         <file>led_green_off.svg</file>
