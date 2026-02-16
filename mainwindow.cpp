@@ -629,7 +629,7 @@ void MainWindow::CoilsChanged(bool value) {
         QString reg_name = sender->objectName();
         reg_name = reg_name.remove("cb_");
         qCDebug(logDebug()) << reg_name << value;
-        this->modbus_client->setRegister(QModbusDataUnit::Coils, reg_name, value);
+        this->modbus_client->setRegister(reg_name, value);
     }
 }
 
@@ -640,7 +640,7 @@ void MainWindow::HoldingRegistersChanged(double value) {
         reg_name = reg_name.remove("dsb_");
         value = conversion(reg_name, value);
         qCDebug(logDebug()) << reg_name << value;
-        this->modbus_client->setRegister(QModbusDataUnit::HoldingRegisters, reg_name, value);
+        this->modbus_client->setRegister(reg_name, value);
     }
 }
 
@@ -650,7 +650,7 @@ void MainWindow::StringRegistersChanged(const QString &value) {
         QString reg_name = sender->objectName();
         reg_name = reg_name.remove("le_");
         qCDebug(logDebug()) << reg_name << value;
-        this->modbus_client->setRegisterString(QModbusDataUnit::HoldingRegisters, reg_name, value);
+        this->modbus_client->setRegisterString(reg_name, value);
     }
 }
 
