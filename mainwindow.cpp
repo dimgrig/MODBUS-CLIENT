@@ -127,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent)
     // }
 
     modbus_client->set_modbus_settings(this->modbus_settings_ui->getSettingsFromUi());
+    modbus_client->startPolling();
     modbus_client->connectToHost();
     modbus_settings_ui->set_config(modbus_client->get_config());
 
@@ -195,8 +196,8 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event) {
 }
 
 void MainWindow::connect_signal_slot() {
-    connect(this->timer, &QTimer::timeout, this, &MainWindow::on_timer);
-    this->timer->start(this->modbus_settings_ui->get_poll_timer());
+    // connect(this->timer, &QTimer::timeout, this, &MainWindow::on_timer);
+    // this->timer->start(this->modbus_settings_ui->get_poll_timer());
 
     connect(this->modbus_client, &ModbusClient::read_ready, this, &MainWindow::modbus_read);
 
@@ -207,14 +208,15 @@ void MainWindow::connect_signal_slot() {
         }
         modbus_client->set_modbus_settings(this->modbus_settings_ui->getSettingsFromUi());
         if (connected) {
+            modbus_client->startPolling();
             modbus_client->connectToHost();
         }
     });
 
-    connect(this->modbus_settings_ui, &ModbusSettingsUI::poll_timer_changed, [this](int value){
-        this->timer->stop();
-        this->timer->start(value);
-    });
+    // connect(this->modbus_settings_ui, &ModbusSettingsUI::poll_timer_changed, [this](int value){
+    //     this->timer->stop();
+    //     this->timer->start(value);
+    // });
 
     connect(this->modbus_client, &ModbusClient::on_state_changed, this->modbus_settings_ui, &ModbusSettingsUI::onModbusStateChanged);
 
@@ -226,6 +228,7 @@ void MainWindow::connect_signal_slot() {
         }
         modbus_client->set_modbus_config(path);
         if (connected) {
+            modbus_client->startPolling();
             modbus_client->connectToHost();
         }
 
@@ -298,32 +301,32 @@ void MainWindow::auth_ok() {
 
 }
 
-void MainWindow::on_timer() {
-    //qCDebug(logDebug()) << "modbus_read_request";
-    auto reg_v = modbus_client->get_reg_v();
-    for (const auto &reg : reg_v) {
-        if (reg.contains(QModbusDataUnit::RegisterType::DiscreteInputs)) {
-            this->modbus_client->on_read(QModbusDataUnit::RegisterType::DiscreteInputs,
-                                         reg[QModbusDataUnit::RegisterType::DiscreteInputs].startAddress(),
-                                         reg[QModbusDataUnit::RegisterType::DiscreteInputs].valueCount());
-        }
-        if (reg.contains(QModbusDataUnit::RegisterType::Coils)) {
-            this->modbus_client->on_read(QModbusDataUnit::RegisterType::Coils,
-                                         reg[QModbusDataUnit::RegisterType::Coils].startAddress(),
-                                         reg[QModbusDataUnit::RegisterType::Coils].valueCount());
-        }
-        if (reg.contains(QModbusDataUnit::RegisterType::InputRegisters)) {
-            this->modbus_client->on_read(QModbusDataUnit::RegisterType::InputRegisters,
-                                         reg[QModbusDataUnit::RegisterType::InputRegisters].startAddress(),
-                                         reg[QModbusDataUnit::RegisterType::InputRegisters].valueCount());
-        }
-        if (reg.contains(QModbusDataUnit::RegisterType::HoldingRegisters)) {
-            this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters,
-                                         reg[QModbusDataUnit::RegisterType::HoldingRegisters].startAddress(),
-                                         reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount());
-        }
-    }
-}
+// void MainWindow::on_timer() {
+//     //qCDebug(logDebug()) << "modbus_read_request";
+//     auto reg_v = modbus_client->get_reg_v();
+//     for (const auto &reg : reg_v) {
+//         if (reg.contains(QModbusDataUnit::RegisterType::DiscreteInputs)) {
+//             this->modbus_client->on_read(QModbusDataUnit::RegisterType::DiscreteInputs,
+//                                          reg[QModbusDataUnit::RegisterType::DiscreteInputs].startAddress(),
+//                                          reg[QModbusDataUnit::RegisterType::DiscreteInputs].valueCount());
+//         }
+//         if (reg.contains(QModbusDataUnit::RegisterType::Coils)) {
+//             this->modbus_client->on_read(QModbusDataUnit::RegisterType::Coils,
+//                                          reg[QModbusDataUnit::RegisterType::Coils].startAddress(),
+//                                          reg[QModbusDataUnit::RegisterType::Coils].valueCount());
+//         }
+//         if (reg.contains(QModbusDataUnit::RegisterType::InputRegisters)) {
+//             this->modbus_client->on_read(QModbusDataUnit::RegisterType::InputRegisters,
+//                                          reg[QModbusDataUnit::RegisterType::InputRegisters].startAddress(),
+//                                          reg[QModbusDataUnit::RegisterType::InputRegisters].valueCount());
+//         }
+//         if (reg.contains(QModbusDataUnit::RegisterType::HoldingRegisters)) {
+//             this->modbus_client->on_read(QModbusDataUnit::RegisterType::HoldingRegisters,
+//                                          reg[QModbusDataUnit::RegisterType::HoldingRegisters].startAddress(),
+//                                          reg[QModbusDataUnit::RegisterType::HoldingRegisters].valueCount());
+//         }
+//     }
+// }
 
 void MainWindow::modbus_read(QModbusDataUnit mdu) {
     qCDebug(logDebug()) << "modbus_read" << "registerType" << mdu.registerType() << "valueCount" << mdu.values().size() << "values" << mdu.values();

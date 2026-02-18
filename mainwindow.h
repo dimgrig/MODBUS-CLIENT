@@ -78,7 +78,7 @@ private slots:
     void setDirty() { setWindowModified(true); }
 
     void auth_ok();
-    void on_timer();
+    //void on_timer();
     void modbus_read(QModbusDataUnit mdu);
 
     void CoilsChanged(bool value);
@@ -104,7 +104,7 @@ private:
 
     Ui::MainWindow *ui;
 
-    QTimer *timer = new QTimer(this);
+    //QTimer *timer = new QTimer(this);
 
     ModbusClient *modbus_client = new ModbusClient(this);
     ModbusSettingsUI *modbus_settings_ui = new ModbusSettingsUI(this);
