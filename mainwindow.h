@@ -79,7 +79,7 @@ private slots:
 
     void auth_ok();
     //void on_timer();
-    void modbus_read(QModbusDataUnit mdu);
+    void modbus_read(int serverAddress, QModbusDataUnit mdu);
 
     void CoilsChanged(bool value);
     void HoldingRegistersChanged(double value);
@@ -123,7 +123,7 @@ private:
     std::vector<QLineEdit*> ir_le_v;
     std::vector<QLineEdit*> hr_le_v;
 
-    std::map<QString, QModbusDataUnit> _mdum;
+    std::map<int, std::map<QString, QModbusDataUnit>> _mdum;
 
     bool _request = false;
 };
