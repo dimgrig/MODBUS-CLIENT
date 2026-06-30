@@ -1,5 +1,6 @@
 #include "Config.h"
 
+#include "CoreConfig.h"
 #include "Profiler.h"
 #include "TestRunner.h"
 
@@ -7,8 +8,8 @@ Config::Config() {
     //std::cout  <<  "Config::Config()" << std::endl;
     // must be in build-astra-Desktop_Qt_5_15_2-Debug folder for QT CREATOR
     // must be in cmake-build-debug-mingw folder for cmake
-    if (QFile("config.ini").exists()) {
-        QSettings config("config.ini", QSettings::IniFormat);
+    if (QFile(CoreConfig::configFile()).exists()) {
+        QSettings config(CoreConfig::configFile(), QSettings::IniFormat);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         config.setIniCodec("UTF-8"); //Windows-1251
 #endif
