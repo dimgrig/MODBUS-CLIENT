@@ -2,9 +2,7 @@
     <qresource prefix="/qss">
         <file>styles/style.qss</file>
     </qresource>
-    <qresource prefix="/translations">
-        <file>qtbase_ru.qm</file>
-    </qresource>
+    <qresource prefix="/translations"/>
     <qresource prefix="/json">
         <file>json/modbus.json</file>
         <file>json/modbus_10.json</file>
@@ -22,11 +20,13 @@
         <file>json/modbus_AME3030.json</file>
     </qresource>
     <qresource prefix="/icons">
-        <file>qtbase_ru.qm</file>
-        <file>resources.qrc</file>
-        <file>app_acs.ico</file>
-        <file>app_acs.svg</file>
-        <file>splash_acs.svg</file>
+        <file>splash_modbus_server.svg</file>
+        <file>splash_modbus_client.svg</file>
+        <file>modbus.png</file>
+        <file>modbus_server.png</file>
+        <file>modbus_client.png</file>
+        <file>modbus.svg</file>
+        <file>modbus.ico</file>
     </qresource>
     <qresource prefix="/bg"/>
     <qresource prefix="/"/>
