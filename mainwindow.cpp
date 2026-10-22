@@ -3,6 +3,7 @@
 
 #include <QNetworkProxy>
 #include <QScrollArea>
+#include <QSettings>
 
 #include <float.h>
 #include <locale.h>
@@ -159,12 +160,24 @@ void MainWindow::connect_signal_slot() {
         if (connected) {
             modbus_client->disconnectFromHost();
         }
-        modbus_client->set_modbus_config(path);
+
+        if (path.endsWith(".csv", Qt::CaseInsensitive)) {
+            modbus_client->set_modbus_config_csv(path);
+        } else {
+            modbus_client->set_modbus_config(path);
+        }
+
         if (connected) {
             modbus_client->connectToHost();
         }
 
         this->modbus_ui();
+
+        QSettings s(CoreConfig::configFile(), QSettings::IniFormat);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        s.setIniCodec("UTF-8");
+#endif
+        s.setValue("modbus-client/LAST_CONFIG", path);
     });
     connect(this->modbus_client, &ModbusClient::config_changed, this->modbus_settings_ui, &ModbusSettingsUI::set_config);
 
@@ -181,6 +194,23 @@ void MainWindow::connect_signal_slot() {
 
 void MainWindow::read_config(){
     this->modbus_settings_ui->read_config(cfg.MODBUS_SETTINGS);
+
+    // Загрузка последнего конфига (JSON или CSV), если он сохранён
+    // и файл существует. Выполняется до первого connectToHost() в конструкторе,
+    // поэтому connect() уже будет с готовыми _mdum/типами.
+    QSettings s(CoreConfig::configFile(), QSettings::IniFormat);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    s.setIniCodec("UTF-8");
+#endif
+    const QString last = s.value("modbus-client/LAST_CONFIG", QString()).toString();
+    if (!last.isEmpty() && QFile::exists(last)) {
+        this->modbus_settings_ui->set_config(last);
+        if (last.endsWith(".csv", Qt::CaseInsensitive)) {
+            this->modbus_client->set_modbus_config_csv(last);
+        } else {
+            this->modbus_client->set_modbus_config(last);
+        }
+    }
 }
 
 void MainWindow::write_config(){
@@ -271,6 +301,15 @@ void MainWindow::auth_ok() {
 void MainWindow::modbus_read(int serverAddress, QModbusDataUnit mdu) {
     qCDebug(logDebug()) << "modbus_read" << "registerType" << mdu.registerType() << "valueCount" << mdu.values().size() << "values" << mdu.values();
 
+    auto reg_scale_m = modbus_client->get_reg_scale_m();
+    auto scaleFor = [&](const QString& regName) -> double {
+        if (reg_scale_m.count(serverAddress) > 0 &&
+            reg_scale_m.at(serverAddress).count(regName) > 0) {
+            return reg_scale_m.at(serverAddress).at(regName);
+        }
+        return 0.0;
+    };
+
     switch (mdu.registerType()) {
         case QModbusDataUnit::DiscreteInputs:
         {
@@ -338,7 +377,7 @@ void MainWindow::modbus_read(int serverAddress, QModbusDataUnit mdu) {
                                     auto le = this->ui->gb3->findChild<QLineEdit*>("le_" + regName);
                                     if (le) {
                                         QVector<quint16> data = mdu.values().mid(j);
-                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format());
+                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format(), scaleFor(regName));
                                         le->setText(value.toString());
                                     }
                                     i += _mdu.second.valueCount();
@@ -349,7 +388,7 @@ void MainWindow::modbus_read(int serverAddress, QModbusDataUnit mdu) {
                                     //qCDebug(logDebug()) << regName << mdu.values()[j];
                                     if (dsb) {
                                         QVector<quint16> data = mdu.values().mid(j);
-                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format());
+                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format(), scaleFor(regName));
                                         dsb->setValue(value.toDouble());
 
                                         i += _mdu.second.valueCount();
@@ -392,7 +431,7 @@ void MainWindow::modbus_read(int serverAddress, QModbusDataUnit mdu) {
                                     if (le) {
                                         disconnect(le, &QLineEdit::textChanged, this, &MainWindow::StringRegistersChanged);
                                         QVector<quint16> data = mdu.values().mid(j);
-                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format());
+                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format(), scaleFor(regName));
                                         le->setText(value.toString());
                                         connect(le, &QLineEdit::textChanged, this, &MainWindow::StringRegistersChanged);
                                     }
@@ -413,7 +452,7 @@ void MainWindow::modbus_read(int serverAddress, QModbusDataUnit mdu) {
             #endif
         #endif
                                         QVector<quint16> data = mdu.values().mid(j);
-                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format());
+                                        QVariant value = ModbusDataConverter::registersToVariant(data, regName, dataType, this->modbus_client->modbus_format(), scaleFor(regName));
                                         dsb->setValue(value.toDouble());
 
                                         i += _mdu.second.valueCount();
@@ -484,13 +523,13 @@ void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_typ
     dsb->setObjectName(QString("dsb_") + name);
     dsb->setMinimumSize({50, 20});
 
-    if (name.contains("* 0.01") || name.contains("* 0.1")) {
-        dsb->setDecimals(2);
-        dsb->setSingleStep(0.01);
-        dsb->setMaximum(DBL_MAX);
-        dsb->setMinimum(-DBL_MAX);
-        return;
-    }
+    // if (name.contains("* 0.01") || name.contains("* 0.1")) {
+    //     dsb->setDecimals(2);
+    //     dsb->setSingleStep(0.01);
+    //     dsb->setMaximum(DBL_MAX);
+    //     dsb->setMinimum(-DBL_MAX);
+    //     return;
+    // }
 
     if (reg_type.toLower().contains("float") || reg_type.toLower().contains("double")) {
         //float or double
