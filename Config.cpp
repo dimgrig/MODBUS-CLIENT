@@ -1,8 +1,8 @@
 #include "Config.h"
 
-#include "CoreConfig.h"
-#include "Profiler.h"
-#include "TestRunner.h"
+#include <core-lib/CoreConfig.h>
+#include <core-lib/Profiler.h>
+#include <core-lib/TestRunner.h>
 
 Config::Config() {
     //std::cout  <<  "Config::Config()" << std::endl;

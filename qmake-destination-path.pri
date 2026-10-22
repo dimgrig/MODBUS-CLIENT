@@ -26,10 +26,29 @@ PROCESSOR_x64 {
 PROCESSOR_x86 {
     processor_path = x86
 }
+PROCESSOR_ARM64 {
+    processor_path = arm64
+}
+PROCESSOR_ARM {
+    processor_path = arm
+}
 BUILD_DEBUG {
     build_path = debug
 } else {
     build_path = release
+}
+wasm {
+    CONFIG += PLATFORM_WASM
+    platform_path = wasm
+    message(PLATFORM_WASM)
+}
+wasm {
+    CONFIG += COMPILER_EMSCRIPTEN
+    compiler_path = emscripten
+}
+contains(QT_ARCH, wasm)|contains(QT_ARCH, wasm32) {
+    CONFIG += PROCESSOR_WASM
+    processor_path = wasm32
 }
 
 DESTINATION_PATH = $$platform_path/$$compiler_path/$$processor_path/$$build_path

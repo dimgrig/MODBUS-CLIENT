@@ -33,21 +33,21 @@
 
 #include <iostream>
 
-#include "aqp.h"
-#include "icons.h"
-#include "Logger.h"
-#include "macroses.h"
-#include "templates.h"
-#include "Sleeper.h"
-#include "TestRunner.h"
+#include <core-widgets-lib/aqp.h>
+#include <core-widgets-lib/icons.h>
+#include <core-lib/Logger.h>
+#include <core-lib/macroses.h>
+#include <core-lib/templates.h>
+#include <core-lib/Sleeper.h>
+#include <core-lib/TestRunner.h>
 
 #include <QGridLayout>
 #include <QTranslator>
 #include <QLibraryInfo>
 
-#include "Profiler.h"
+#include <core-lib/Profiler.h>
 
-#include "ModbusClient.h"
+#include <core-modbus-lib/ModbusClient.h>
 
 //using namespace std;
 
