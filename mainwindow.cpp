@@ -161,11 +161,7 @@ void MainWindow::connect_signal_slot() {
             modbus_client->disconnectFromHost();
         }
 
-        if (path.endsWith(".csv", Qt::CaseInsensitive)) {
-            modbus_client->set_modbus_config_csv(path);
-        } else {
-            modbus_client->set_modbus_config(path);
-        }
+        modbus_client->set_modbus_config(path);
 
         if (connected) {
             modbus_client->connectToHost();
@@ -205,11 +201,7 @@ void MainWindow::read_config(){
     const QString last = s.value("modbus-client/LAST_CONFIG", QString()).toString();
     if (!last.isEmpty() && QFile::exists(last)) {
         this->modbus_settings_ui->set_config(last);
-        if (last.endsWith(".csv", Qt::CaseInsensitive)) {
-            this->modbus_client->set_modbus_config_csv(last);
-        } else {
-            this->modbus_client->set_modbus_config(last);
-        }
+        this->modbus_client->set_modbus_config(last);
     }
 }
 
@@ -302,12 +294,12 @@ void MainWindow::modbus_read(int serverAddress, QModbusDataUnit mdu) {
     qCDebug(logDebug()) << "modbus_read" << "registerType" << mdu.registerType() << "valueCount" << mdu.values().size() << "values" << mdu.values();
 
     auto reg_scale_m = modbus_client->get_reg_scale_m();
-    auto scaleFor = [&](const QString& regName) -> double {
+    auto scaleFor = [&](const QString& regName) -> ModbusScale {
         if (reg_scale_m.count(serverAddress) > 0 &&
             reg_scale_m.at(serverAddress).count(regName) > 0) {
             return reg_scale_m.at(serverAddress).at(regName);
         }
-        return 0.0;
+        return ModbusScale();
     };
 
     switch (mdu.registerType()) {
@@ -518,18 +510,16 @@ void MainWindow::StringRegistersChanged(const QString &value) {
     }
 }
 
-void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_type, const QModbusDataUnit &mdu) {
+void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_type, const QModbusDataUnit &mdu, const ModbusScale &scale = ModbusScale()) {
     Q_UNUSED(mdu);
     dsb->setObjectName(QString("dsb_") + name);
     dsb->setMinimumSize({50, 20});
 
-    // if (name.contains("* 0.01") || name.contains("* 0.1")) {
-    //     dsb->setDecimals(2);
-    //     dsb->setSingleStep(0.01);
-    //     dsb->setMaximum(DBL_MAX);
-    //     dsb->setMinimum(-DBL_MAX);
-    //     return;
-    // }
+    ModbusScale eff = scale;
+    if (eff.isNone()) {
+        if (name.contains("* 0.01"))      eff = ModbusScale::makeFactor(0.01);
+        else if (name.contains("* 0.1"))  eff = ModbusScale::makeFactor(0.1);
+    }
 
     if (reg_type.toLower().contains("float") || reg_type.toLower().contains("double")) {
         //float or double
@@ -576,6 +566,31 @@ void create_dsb(QDoubleSpinBox* dsb, const QString &name, const QString &reg_typ
     } else {
         //TODO
     }
+
+    if (eff.isFactor()) {
+        const double f = eff.factor;
+        dsb->setMaximum(dsb->maximum() * f);
+        dsb->setMinimum(dsb->minimum() * f);
+        dsb->setSingleStep(f);
+        int dec = 0;
+        if (f >= 0.1) dec = 1;
+        else if (f >= 0.01) dec = 2;
+        else if (f >= 0.001) dec = 3;
+        else dec = 4;
+        if (dec > dsb->decimals())
+            dsb->setDecimals(dec);
+    } else if (eff.isRange()) {
+        dsb->setMinimum(eff.dstMin);
+        dsb->setMaximum(eff.dstMax);
+        const double span = eff.dstMax - eff.dstMin;
+        dsb->setSingleStep(span > 0.0 ? span / 100.0 : 0.01);
+        int dec = 0;
+        if (span >= 100.0) dec = 0;
+        else if (span >= 10.0) dec = 1;
+        else if (span >= 1.0)  dec = 2;
+        else                   dec = 3;
+        dsb->setDecimals(dec);
+    }
 }
 
 void MainWindow::modbus_ui() {
@@ -585,6 +600,7 @@ void MainWindow::modbus_ui() {
     this->_mdum = modbus_client->get_mdum();
     auto mdum_m = modbus_client->get_sort_by_start_address_mdum_v();
     auto reg_data_type_m = modbus_client->get_reg_data_type_m();
+    auto reg_scale_m = modbus_client->get_reg_scale_m();
 
     for (const auto &[serverAddress, mdum_v] : mdum_m) {
         for (const auto &_mdu : mdum_v) {
@@ -638,7 +654,12 @@ void MainWindow::modbus_ui() {
                     } else {
                         auto label = new QLabel(regName, this);
                         auto dsb = new QDoubleSpinBox(this);
-                        create_dsb(dsb, regName, reg_data_type, mdu);
+                        ModbusScale regScale;
+                        if (reg_scale_m.count(serverAddress) > 0 &&
+                            reg_scale_m.at(serverAddress).count(regName) > 0) {
+                            regScale = reg_scale_m.at(serverAddress).at(regName);
+                        }
+                        create_dsb(dsb, regName, reg_data_type, mdu, regScale);
 
                         gl3->addWidget(label, ir_le_v.size() + ir_v.size(), 0);
                         gl3->addWidget(dsb, ir_le_v.size() + ir_v.size(), 1);
@@ -663,7 +684,12 @@ void MainWindow::modbus_ui() {
                     } else {
                         auto label = new QLabel(regName, this);
                         auto dsb = new QDoubleSpinBox(this);
-                        create_dsb(dsb, regName, reg_data_type, mdu);
+                        ModbusScale regScale;
+                        if (reg_scale_m.count(serverAddress) > 0 &&
+                            reg_scale_m.at(serverAddress).count(regName) > 0) {
+                            regScale = reg_scale_m.at(serverAddress).at(regName);
+                        }
+                        create_dsb(dsb, regName, reg_data_type, mdu, regScale);
 
                         gl4->addWidget(label, hr_le_v.size() + hr_v.size(), 0);
                         gl4->addWidget(dsb, hr_le_v.size() + hr_v.size(), 1);
