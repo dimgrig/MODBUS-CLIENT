@@ -69,7 +69,6 @@ int main(int argc, char *argv[]) {
     }
 
     Application app(argc, argv);
-    Q_INIT_RESOURCE(core_widgets_resources);
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
     QSplashScreen splash;

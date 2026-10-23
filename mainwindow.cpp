@@ -22,8 +22,6 @@ const int StatusTimeout = AQP::MSecPerSecond * 10;
 
 void create_gb(QGridLayout *gl, QGroupBox *gb) {
     QGroupBox* gbi = new QGroupBox;
-    //QGridLayout *li = new QGridLayout; //gl
-    //QGroupBox *gbo = new QGroupBox; //gb
     QVBoxLayout *lo = new QVBoxLayout;
     QScrollArea* sa = new QScrollArea();
 
@@ -177,9 +175,6 @@ void MainWindow::connect_signal_slot() {
     });
     connect(this->modbus_client, &ModbusClient::config_changed, this->modbus_settings_ui, &ModbusSettingsUI::set_config);
 
-    connect(this->modbus_client, &ModbusClient::host_connecting, this, [this]() {
-        this->modbus_settings_ui->setSettingsEnabled(false);
-    });
     connect(this->modbus_client, &ModbusClient::host_connected, this, [this]() {
         this->modbus_settings_ui->setSettingsEnabled(false);
     });
