@@ -7,6 +7,7 @@
 
 #include <float.h>
 #include <locale.h>
+#include <climits>
 
 #include "Config.h"
 

@@ -78,7 +78,6 @@ private slots:
     void setDirty() { setWindowModified(true); }
 
     void auth_ok();
-    //void on_timer();
     void modbus_read(int serverAddress, QModbusDataUnit mdu);
 
     void CoilsChanged(bool value);
