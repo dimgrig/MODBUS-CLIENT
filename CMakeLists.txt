@@ -133,6 +133,22 @@ target_link_libraries(modbus-client PRIVATE
     Core::core-modbus-lib
     Core::core-widgets-lib)
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/appinfo.env.in
+    ${CMAKE_CURRENT_BINARY_DIR}/appinfo.env
+    @ONLY
+)
+
+file(READ "${CMAKE_CURRENT_BINARY_DIR}/appinfo.env" _appinfo_check)
+if(_appinfo_check MATCHES "APP_VERSION=\"\"")
+    message(FATAL_ERROR
+        "appinfo.env generated with empty APP_VERSION. "
+        "Template uses @VERSION@ but CMake defines PROJECT_VERSION/MODBUS_VERSION. "
+        "Use @PROJECT_VERSION@ in appinfo.env.in.")
+endif()
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/appinfo.env DESTINATION .)
+
 # ── RPATH (Linux: исполняемый файл сам находит <sdk>/lib) ───────
 if(NOT WIN32)
     set_target_properties(modbus-client PROPERTIES
