@@ -159,13 +159,10 @@ endif()
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/appinfo.env DESTINATION .)
 
 # ── RPATH (Linux: исполняемый файл сам находит <sdk>/lib) ───────
-if(NOT WIN32)
-    set_target_properties(modbus-client PROPERTIES
-        BUILD_RPATH   "$<TARGET_FILE_DIR:Core::core-widgets-lib>"
-        INSTALL_RPATH "$ORIGIN;$ORIGIN/../lib")
-endif()
+set_target_properties(modbus-client PROPERTIES
+    BUILD_RPATH   "$<TARGET_FILE_DIR:Core::core-widgets-lib>"
+    INSTALL_RPATH "$ORIGIN;$ORIGIN/../lib")
 
-# ── Windows: самодостаточный набор DLL ──────────────────────────
 # ── Windows: самодостаточный набор DLL ──────────────────────────
 if(WIN32 AND MODBUS_CLIENT_DEPLOY)
     # 1) Core DLL из <sdk>/bin

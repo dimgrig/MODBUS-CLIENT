@@ -272,7 +272,7 @@ RUN set -eux; \
 
 # 7) export
 FROM scratch AS export
-COPY --from=packager /staging/ModbusClientDistributionKit /ModbusClientDistributionKit
+###COPY --from=packager /staging/ModbusClientDistributionKit /ModbusClientDistributionKit
 COPY --from=packager /staging/*.deb /
 
 # 8) final
