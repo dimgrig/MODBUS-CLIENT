@@ -19,7 +19,7 @@ on:
 
 jobs:
   release:
-    uses: dimgrig/CoreCI/.github/workflows/release-template.yml@v0.3.0
+    uses: dimgrig/CoreCI/.github/workflows/release-template.yml@v0.3.2
     with:
       app_name: modbus-client
       release_title: MODBUS-CLIENT
